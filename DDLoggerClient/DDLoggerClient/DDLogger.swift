@@ -9,12 +9,12 @@ import Foundation
 import SwiftUI
 
 ///log的级别，对应不同的颜色
-public struct ZXKitLogType : OptionSet {
-    public static let debug = ZXKitLogType([])        //only show in debug output
-    public static let info = ZXKitLogType(rawValue: 1)    //textColor #50d890
-    public static let warn = ZXKitLogType(rawValue: 2)         //textColor #f6f49d
-    public static let error = ZXKitLogType(rawValue: 4)        //textColor #ff7676
-    public static let privacy = ZXKitLogType(rawValue: 8)      //textColor #42e6a4
+public struct DDLogType : OptionSet {
+    public static let debug = DDLogType([])        //only show in debug output
+    public static let info = DDLogType(rawValue: 1)    //textColor #50d890
+    public static let warn = DDLogType(rawValue: 2)         //textColor #f6f49d
+    public static let error = DDLogType(rawValue: 4)        //textColor #ff7676
+    public static let privacy = DDLogType(rawValue: 8)      //textColor #42e6a4
 
     public let rawValue: Int
     public init(rawValue: Int) {
@@ -22,7 +22,7 @@ public struct ZXKitLogType : OptionSet {
     }
 }
 
-extension ZXKitLogType {
+extension DDLogType {
     func color() -> Color {
         switch self {
         case .debug:

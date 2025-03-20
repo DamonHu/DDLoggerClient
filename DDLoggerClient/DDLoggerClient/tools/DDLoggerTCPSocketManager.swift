@@ -102,7 +102,7 @@ extension DDLoggerClientTCPSocketManager: GCDAsyncSocketDelegate {
         }
         let item = DDLoggerClientItem()
         
-        item.mLogItemType = ZXKitLogType(rawValue: itemType)
+        item.mLogItemType = DDLogType(rawValue: itemType)
         item.mLogDebugContent = String(msgList[1])
         item.mCreateDate = Date(timeIntervalSince1970: TimeInterval(msgList[2]) ?? 0)
         msgList.removeFirst(3)

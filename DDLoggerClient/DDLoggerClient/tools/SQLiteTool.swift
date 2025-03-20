@@ -36,7 +36,7 @@ class SQLiteTool {
                 //第三步
                 let item = DDLoggerClientItem()
                 item.id = Int(sqlite3_column_int(queryStatement, 0))
-                item.mLogItemType = ZXKitLogType.init(rawValue: Int(sqlite3_column_int(queryStatement, 2)))
+                item.mLogItemType = DDLogType.init(rawValue: Int(sqlite3_column_int(queryStatement, 2)))
                 item.mLogDebugContent = String(cString: sqlite3_column_text(queryStatement, 4))
                 //更新内容
                 let contentString = String(cString: sqlite3_column_text(queryStatement, 5))

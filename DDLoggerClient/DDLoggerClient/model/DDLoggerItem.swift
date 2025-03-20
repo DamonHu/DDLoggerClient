@@ -18,7 +18,7 @@ public class DDLoggerClientItem {
     let identifier = UUID()                                 //用于hash计算
     var id: Int = 0
     
-    var mLogItemType = ZXKitLogType.info             //log类型
+    var mLogItemType = DDLogType.info             //log类型
     var mLogDebugContent: String = ""              //log输出的文件、行数、函数名
     private(set) var mLogContent: String = ""          //log的内容
     var mCreateDate = Date()                      //log日期
@@ -31,7 +31,7 @@ public class DDLoggerClientItem {
 }
 
 extension DDLoggerClientItem {
-    func updateLogContent(type: ZXKitLogType, content: String) {
+    func updateLogContent(type: DDLogType, content: String) {
         if type == .privacy {
             self.mLogContent = content.aesCBCDecrypt(password: DDLoggerClient.privacyLogPassword, ivString: DDLoggerClient.privacyLogIv, encodeType: DDLoggerClient.privacyResultEncodeType) ?? "Invalid encryption"
         } else {
