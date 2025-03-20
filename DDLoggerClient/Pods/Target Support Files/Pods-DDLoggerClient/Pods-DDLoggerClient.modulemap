@@ -1,0 +1,6 @@
+framework module Pods_DDLoggerClient {
+  umbrella header "Pods-DDLoggerClient-umbrella.h"
+
+  export *
+  module * { export * }
+}
