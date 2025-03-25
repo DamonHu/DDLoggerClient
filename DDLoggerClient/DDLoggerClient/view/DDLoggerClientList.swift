@@ -93,29 +93,25 @@ struct DDLoggerClientList: View {
         }
         
         ScrollViewReader { proxy in
-            List(list.indices, id: \.self) { index in
-                let item = list[index]
-                DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index)
+            ScrollView {
+                LazyVStack {
+                    ForEach(list.indices, id: \.self) { index in
+                        let item = list[index]
+                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index)
                             .id(index)
-            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+                    }
+                }
+            }
+            .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
                 .onChange(of: selectedIndex) { newValue in
                     guard let index = self.selectedIndex else {
                         return
                     }
                     if self.filteredIndices.isEmpty { return }
-                    
                     let filteredIndice = self.filteredIndices[index]
-                    print("filteredIndices", self.filteredIndices, filteredIndice)
-//                    proxy.scrollTo(filteredIndice, anchor: .center)
-//                    DispatchQueue.main.async {
-//                                proxy.scrollTo(filteredIndice, anchor: .center)
-//                            }
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                withAnimation {
-                                    proxy.scrollTo(filteredIndice, anchor: .center)
-                                }
-                            }
+                    withAnimation {
+                        proxy.scrollTo(filteredIndice, anchor: .center)
+                    }
                 }
         }
         
