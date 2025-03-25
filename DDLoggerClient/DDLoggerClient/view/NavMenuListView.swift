@@ -7,21 +7,15 @@
 
 import SwiftUI
 import CommonCrypto
-#if canImport(CryptoKit)
-import CryptoKit
-#endif
 
 struct NavMenuListView: View {
     @Environment(\.openURL) var openURL
     @Binding var list: [DDLoggerClientItem]    //显示在列表的log
-    @Binding var isLocal: Bool
     //本地加密配置
     @State private var privacyLogPassword = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogPassword.rawValue) ?? DDLoggerClient.privacyLogPassword
     @State private var privacyLogIv = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogIv.rawValue) ?? DDLoggerClient.privacyLogIv
     @State private var isEncodeBase64 = UserDefaults.standard.bool(forKey: UserDefaultsKey.isEncodeBase64.rawValue)
     //服务器配置
-//    @State private var domainText = UserDefaults.standard.string(forKey: UserDefaultsKey.domain.rawValue) ?? DDLoggerClient.socketDomain
-    @State private var typeText =  UserDefaults.standard.string(forKey: UserDefaultsKey.socketType.rawValue) ?? DDLoggerClient.socketType
     @State private var fileList: [URL] = [] {
         willSet {
             let pathList = newValue.compactMap({ url in
@@ -30,28 +24,7 @@ struct NavMenuListView: View {
             UserDefaults.standard.set(pathList, forKey: UserDefaultsKey.fileListHistory.rawValue)
         }
     }
-    @State private var remoteList: [String] = []
-    @State private  var remoteLogList: [String: [DDLoggerClientItem]] = [:]    //远程接受到的所有log
-    @State private var selectedPath: String? {
-        willSet {
-            if let path = newValue {
-                if isLocal {
-                    print(path)
-                    if path.hasPrefix(".db") {
-                        let tool = SQLiteTool(path: URL.init(fileURLWithPath: path))
-                        list = tool.getAllLog()
-                    } else {
-                        let tool = LogParseTool(path: URL.init(fileURLWithPath: path))
-                        list = tool.getAllLog()
-                    }
-                } else {
-                    list = remoteLogList[path] ?? []
-                }
-            } else {
-                list = []
-            }
-        }
-    }
+    @Binding var selectedPath: String?
     @State private var dragOver = false
     @State private var showAlert = false
     @State private var isEditConfig = false  //是否编辑修改
@@ -63,15 +36,8 @@ struct NavMenuListView: View {
             HStack(alignment: .center, spacing: 0) {
                 Button("本地日志") {
                     self.isConnecting = false
-                    self.isLocal = true
                     self.selectedPath = nil
-                }.background(isLocal ? .green : .gray)
-                    .foregroundColor(.white)
-                    .frame(height: 40)
-                Button("远程日志") {
-                    self.selectedPath = nil
-                    self.isLocal = false
-                }.background(isLocal ? .gray : .green)
+                }.background(.green)
                     .foregroundColor(.white)
                     .frame(height: 40)
                 Image("icon_setting")
@@ -82,26 +48,18 @@ struct NavMenuListView: View {
                         print("点击设置")
                         isEditConfig = !isEditConfig
                     }.padding()
-                if self.isLocal {
-                    Image("icon_delete")
-                        .resizable()
-                        .frame(width: 20, height: 20, alignment: .center)
-                        .onTapGesture {
-                            print("delete")
-                            self.fileList = []
-                            self.selectedPath = nil
+                Image("icon_delete")
+                    .resizable()
+                    .frame(width: 20, height: 20, alignment: .center)
+                    .onTapGesture {
+                        print("delete")
+                        if let path = self.selectedPath, let index = fileList.firstIndex(where: { url in
+                            return url.path == path
+                        }) {
+                            fileList.remove(at: index)
                         }
-                } else {
-                    Image("icon_refresh")
-                        .resizable()
-                        .frame(width: 20, height: 20, alignment: .center)
-                        .onTapGesture {
-                            print("刷新")
-//                            DDLoggerClient.socketDomain = domainText
-                            DDLoggerClient.socketType = typeText
-                            self._startSocketConnect()
-                        }
-                }
+                        self.selectedPath = nil
+                    }
             }.frame(maxWidth: .infinity, alignment: .center)
             //中间内容布局
             if isEditConfig {
@@ -149,33 +107,6 @@ struct NavMenuListView: View {
                                 .frame(height: 40)
                         }
                     }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                    //远程配置
-                    HStack(alignment: .center, spacing: 10) {
-                        Text("")
-                            .padding()
-                            .frame(width: 5, height: 16, alignment: .center)
-                            .background(.red)
-                            .cornerRadius(6)
-                        Text("远程日志配置")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }.padding(.leading, 10)
-                    HStack(alignment: .center, spacing: 4) {
-                        Text("Domain")
-                            .frame(width: 70, alignment: .center)
-//                        TextField("local", text: $domainText)
-//                            .frame(height: 24)
-//                            .border(.gray, width: 0.5)
-//                            .textFieldStyle(.plain)
-                        
-                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                    HStack(alignment: .center, spacing: 4) {
-                        Text("Type")
-                            .frame(width: 70, alignment: .center)
-                        TextField("_DDLoggerClient", text: $typeText)
-                            .frame(height: 24)
-                            .border(.gray, width: 0.5)
-                            .textFieldStyle(.plain)
-                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                     //确定
                     HStack(alignment: .center, spacing: 4) {
                         Button("确定") {
@@ -184,20 +115,14 @@ struct NavMenuListView: View {
                                 return
                             }
                             isEditConfig = false
-//                            DDLoggerClient.socketDomain = domainText
-                            DDLoggerClient.socketType = typeText
                             DDLoggerClient.privacyLogPassword = privacyLogPassword
                             DDLoggerClient.privacyLogIv = privacyLogIv
                             DDLoggerClient.privacyResultEncodeType = isEncodeBase64 ? .base64 : .hex
                             
-//                            UserDefaults.standard.set(domainText, forKey: UserDefaultsKey.domain.rawValue)
                             UserDefaults.standard.set(typeText, forKey: UserDefaultsKey.socketType.rawValue)
                             UserDefaults.standard.set(privacyLogPassword, forKey: UserDefaultsKey.privacyLogPassword.rawValue)
                             UserDefaults.standard.set(privacyLogIv, forKey: UserDefaultsKey.privacyLogIv.rawValue)
                             UserDefaults.standard.set(isEncodeBase64, forKey: UserDefaultsKey.isEncodeBase64.rawValue)
-                            if !isLocal {
-                                self._startSocketConnect()
-                            }
                         }.foregroundColor(.white)
                             .background(.green)
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
@@ -218,59 +143,47 @@ struct NavMenuListView: View {
                             .frame(height: 40)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-            } else if isLocal {
-                //本地日志
-                VStack(alignment: .trailing, spacing: 10) {
-                    List(self.fileList, id: \.path) { i in
-                        NavMenuItemView(url: i, selectedPath: $selectedPath)
-                            .onTapGesture {
-                                selectedPath = i.path
-                            }
-                    }
-                    if self.fileList.isEmpty {
-                        List {
-                            Text("drag file to here")
-                                .frame(maxWidth: .infinity, alignment: .center)
+            }
+            //本地日志
+            VStack(alignment: .trailing, spacing: 10) {
+                List(self.fileList, id: \.path) { i in
+                    NavMenuItemView(url: i, selectedPath: $selectedPath)
+                        .onTapGesture {
+                            selectedPath = i.path
                         }
-                    }
-                }.onDrop(of: ["public.file-url"], isTargeted: $dragOver) { providers in
-                    providers.first?.loadDataRepresentation(forTypeIdentifier: "public.file-url", completionHandler: { (data, error) in
-                        if let data = data, let path = String(data: data, encoding: String.Encoding.utf8), let url = URL(string: path) {
-                            if !url.pathExtension.hasPrefix("db") && !url.pathExtension.hasPrefix("log") {
-                                showAlert = true
-                                return
-                            }
-                            selectedPath = url.path
-                            if !self.fileList.contains(url) {
-                                self.fileList.insert(url, at: 0)
-                            }
-                        }
-                    })
-                    return true
-                }.alert("仅支持.db和.log文件", isPresented: $showAlert) {
-                    
-                }.onAppear {
-                    if let pathBookDataList = UserDefaults.standard.object(forKey: UserDefaultsKey.fileListHistory.rawValue) as? [Data] {
-                        self.fileList = pathBookDataList.compactMap({ data in
-                            var isStale = false
-                            let url = try? URL(resolvingBookmarkData: data, options: [.withSecurityScope, .withoutUI], relativeTo: nil, bookmarkDataIsStale: &isStale)
-                            if !isStale, url?.startAccessingSecurityScopedResource() == true {
-                                return url
-                            }
-                            return nil
-                        })
+                }
+                if self.fileList.isEmpty {
+                    List {
+                        Text("drag file to here")
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
-            } else {
-                //远程模式
-                VStack(alignment: .trailing, spacing: 10) {
-                    //服务器列表
-                    List(self.remoteList, id: \.hashValue) { i in
-                        NavRemoteMenuItemView(title: i, selectedPath: $selectedPath)
-                            .onTapGesture {
-                                selectedPath = i
-                            }
+            }.onDrop(of: ["public.file-url"], isTargeted: $dragOver) { providers in
+                providers.first?.loadDataRepresentation(forTypeIdentifier: "public.file-url", completionHandler: { (data, error) in
+                    if let data = data, let path = String(data: data, encoding: String.Encoding.utf8), let url = URL(string: path) {
+                        if !url.pathExtension.hasPrefix("db") && !url.pathExtension.hasPrefix("log") {
+                            showAlert = true
+                            return
+                        }
+                        selectedPath = url.path
+                        if !self.fileList.contains(url) {
+                            self.fileList.insert(url, at: 0)
+                        }
                     }
+                })
+                return true
+            }.alert("仅支持.db和.log文件", isPresented: $showAlert) {
+                
+            }.onAppear {
+                if let pathBookDataList = UserDefaults.standard.object(forKey: UserDefaultsKey.fileListHistory.rawValue) as? [Data] {
+                    self.fileList = pathBookDataList.compactMap({ data in
+                        var isStale = false
+                        let url = try? URL(resolvingBookmarkData: data, options: [.withSecurityScope, .withoutUI], relativeTo: nil, bookmarkDataIsStale: &isStale)
+                        if !isStale, url?.startAccessingSecurityScopedResource() == true {
+                            return url
+                        }
+                        return nil
+                    })
                 }
             }
             //底部
@@ -285,41 +198,8 @@ struct NavMenuListView: View {
                     .offset(y: -40)
             }
             Button("GitHub") {
-                openURL(URL(string: "https://github.com/DamonHu/DDLoggerClient_Mac")!)
+                openURL(URL(string: "https://github.com/DamonHu/DDLoggerClient")!)
             }.offset(y: -30)
         }
-    }
-}
-
-private extension NavMenuListView {
-    func _startSocketConnect() {
-        self.isConnecting = true
-        DDLoggerSocketManager.shared.bonjourDidConnectHandler = { name in
-            self.isConnecting = false
-            let title = "\(name)"
-            if !remoteList.contains(title) {
-                remoteList.append(title)
-            }
-            self.selectedPath = title
-        }
-        DDLoggerSocketManager.shared.socketDidReceiveHandler = { name, item in
-            //插入全局
-            if let selectedPath = self.selectedPath {
-                var list = remoteLogList[selectedPath] ?? []
-                list.insert(item, at: 0)
-                remoteLogList[selectedPath] = list
-                if selectedPath.contains("\(name)") {
-//                    self.list.insert(item, at: 0)
-                    self.list.append(item)
-                }
-            }
-        }
-        DDLoggerSocketManager.shared.start()
-    }
-}
-
-struct NavMenuListView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavMenuListView(list: .constant([]), isLocal: .constant(true))
     }
 }

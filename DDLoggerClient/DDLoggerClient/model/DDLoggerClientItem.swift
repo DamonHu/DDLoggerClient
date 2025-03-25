@@ -10,32 +10,65 @@ import Foundation
 import CommonCrypto
 import SwiftUI
 
+let t = Date()
+
 enum Section: CaseIterable {
     case main
 }
 ///log的内容
 public class DDLoggerClientItem {
     let identifier = UUID()                                 //用于hash计算
-    var id: Int = 0
-    
-    var mLogItemType = DDLogType.info             //log类型
-    var mLogDebugContent: String = ""              //log输出的文件、行数、函数名
-    private(set) var mLogContent: String = ""          //log的内容
-    var mCreateDate = Date()                      //log日期
+    var databaseID: Int = 0                                 //存在database的id
+    public var mLogItemType = DDLogType.debug             //log类型
+    public var mLogFile: String = ""                        //log调用的文件
+    public var mLogLine: String = ""                        //log调用的行数
+    public var mLogFunction: String = ""                    //log调用的函数名
+    public var mLogContent: String = "DDLoggerSwift: Click Log To Copy"  //log的内容
+    public var mCreateDate = t                      //log日期
     
     private var mCurrentHighlightString = ""            //当前需要高亮的字符串
     private var mCacheHasHighlightString = false        //上次查询是否包含高亮的字符串
-    var mCacheHighlightCompleteString = NSMutableAttributedString()   //上次包含高亮支付的富文本
-    
-    
+    private var mCacheHighlightCompleteString = NSMutableAttributedString(string: "")   //上次包含高亮支付的富文本
 }
 
 extension DDLoggerClientItem {
-    func updateLogContent(type: DDLogType, content: String) {
-        if type == .privacy {
-            self.mLogContent = content.aesCBCDecrypt(password: DDLoggerClient.privacyLogPassword, ivString: DDLoggerClient.privacyLogIv, encodeType: DDLoggerClient.privacyResultEncodeType) ?? "Invalid encryption"
+    func getLogContent() -> String {
+        var contentString = ""
+        if self.mLogItemType == .privacy {
+            contentString = mLogContent.aesCBCDecrypt(password: DDLoggerClient.privacyLogPassword, ivString: DDLoggerClient.privacyLogIv, encodeType: DDLoggerClient.privacyResultEncodeType) ?? "Invalid encryption"
         } else {
-            self.mLogContent = content
+            contentString = mLogContent
+        }
+        return contentString
+    }
+    
+    func icon() -> String {
+        switch mLogItemType {
+        case .info:
+            return "✅"
+        case .warn:
+            return "⚠️"
+        case .error:
+            return "❌"
+        case .privacy:
+            return "⛔️"
+        default:
+            return "💜"
+        }
+    }
+    
+    func level() -> String {
+        switch mLogItemType {
+        case .info:
+            return "INFO"
+        case .warn:
+            return "WARN"
+        case .error:
+            return "ERROR"
+        case .privacy:
+            return "PRIVACY"
+        default:
+            return "DEBUG"
         }
     }
     
@@ -46,26 +79,23 @@ extension DDLoggerClientItem {
         return dateStr
     }
     
-    //获取完整的输出内容
-    public func getFullContentString() -> String {
+    func getMessageMeta() -> String {
         //日期
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
         let dateStr = dateFormatter.string(from: mCreateDate)
-        //内容
-        let contentString = self.mLogContent
-        switch mLogItemType {
-            case .info:
-                return dateStr + " ---- ✅✅ ---- " +  mLogDebugContent + "\n" + contentString + "\n"
-            case .warn:
-                return dateStr + " ---- ⚠️⚠️ ---- " +  mLogDebugContent + "\n" + contentString + "\n"
-            case .error:
-                return dateStr + " ---- ❌❌ ---- " +  mLogDebugContent + "\n" + contentString + "\n"
-            case .privacy:
-                return dateStr + " ---- ⛔️⛔️ ---- " +  mLogDebugContent + "\n" + contentString + "\n"
-            default:
-                return dateStr + " ---- 💜💜 ---- " +  mLogDebugContent + "\n" + contentString + "\n"
-        }
+        return "🕛 \(dateStr)" + " - " + "📋 File:\(self.mLogFile)" + " - " + "📏 Line:\(self.mLogLine)" + " - " + "💡 Function: \(self.mLogFunction)"
+    }
+    
+    //获取完整的输出内容
+    public func getFullContentString() -> String {
+        //所有的内容
+        //日期
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        let dateStr = dateFormatter.string(from: mCreateDate)
+        //所有的内容
+         return "\(self.icon())" + " " + "[\(dateStr)]" + " " + "[\(self.level())]" + " " +  "File: \(mLogFile) | Line: \(mLogLine) | Function: \(mLogFunction) " + "\n---------------------------------\n" + self.getLogContent() + "\n"
     }
     
     //根据需要高亮内容查询组装高亮内容
@@ -104,19 +134,3 @@ extension DDLoggerClientItem {
         }
     }
 }
-
-//extension DDLoggerClientItem: Hashable {
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(identifier)
-//    }
-//
-//    public static func ==(lhs: DDLoggerClientItem, rhs: DDLoggerClientItem) -> Bool {
-//        return lhs.identifier == rhs.identifier
-//    }
-//
-//    func contains(query: String?) -> Bool {
-//        guard let query = query else { return true }
-//        guard !query.isEmpty else { return true }
-//        return self.getFullContentString().contains(query)
-//    }
-//}

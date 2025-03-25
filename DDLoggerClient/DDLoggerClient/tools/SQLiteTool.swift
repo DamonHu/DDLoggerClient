@@ -18,15 +18,58 @@ class SQLiteTool {
         //开始新的数据
         self.logDB = self._openDatabase()
     }
+    
+    //获取第一个id，以便判断是否有更多
+    func getMinLogID() -> Int {
+        let databasePath = self.logDBPath
+        guard FileManager.default.fileExists(atPath: databasePath.path) else {
+            return 0
+        }
+        let queryDB = self._openDatabase()
+        let queryString = "SELECT IFNULL(MIN(id), 0) FROM DDLog"
+        
+        var queryStatement: OpaquePointer?
+        var minID: Int?
+        
+        if sqlite3_prepare_v2(queryDB, queryString, -1, &queryStatement, nil) == SQLITE_OK {
+            if sqlite3_step(queryStatement) == SQLITE_ROW {
+                minID = Int(sqlite3_column_int(queryStatement, 0))
+            }
+        }
+        
+        sqlite3_finalize(queryStatement)
+        return minID ?? 0
+    }
 
-    func getAllLog() -> [DDLoggerClientItem] {
+    func getLogs(keyword: String? = nil, type: DDLogType? = nil, startID: Int? = nil, pageSize: Int? = nil) -> [DDLoggerClientItem] {
         let databasePath = self.logDBPath
         guard FileManager.default.fileExists(atPath: databasePath.path) else {
             //数据库文件不存在
             return []
         }
         let queryDB = self._openDatabase()
-        let queryString = "SELECT * FROM hdlog;"
+        var queryString = "SELECT * FROM DDLog"
+        //查询条件
+        var whereClauses: [String] = []
+        if let keyword = keyword, !keyword.isEmpty {
+            whereClauses.append("content LIKE '%\(keyword)%'")
+        }
+        if let type = type {
+            whereClauses.append("logType == \(type.rawValue)")
+        }
+        if let startID = startID {
+            whereClauses.append("id < \(startID)")
+        }
+        // 如果有条件，拼接 WHERE 子句
+        if !whereClauses.isEmpty {
+            queryString += " WHERE " + whereClauses.joined(separator: " AND ") + " ORDER BY id DESC"
+        } else {
+            queryString = queryString + " ORDER BY id DESC"
+        }
+        if let pageSize = pageSize {
+            queryString = queryString + " LIMIT \(pageSize)"
+        }
+        
         var queryStatement: OpaquePointer?
         //第一步
         var logList = [DDLoggerClientItem]()
@@ -35,15 +78,16 @@ class SQLiteTool {
             while(sqlite3_step(queryStatement) == SQLITE_ROW) {
                 //第三步
                 let item = DDLoggerClientItem()
-                item.id = Int(sqlite3_column_int(queryStatement, 0))
-                item.mLogItemType = DDLogType.init(rawValue: Int(sqlite3_column_int(queryStatement, 2)))
-                item.mLogDebugContent = String(cString: sqlite3_column_text(queryStatement, 4))
-                //更新内容
-                let contentString = String(cString: sqlite3_column_text(queryStatement, 5))
-                item.updateLogContent(type: item.mLogItemType, content: contentString)
+                item.databaseID = Int(sqlite3_column_int(queryStatement, 0))
+                item.mLogItemType = DDLogType.init(rawValue: Int(sqlite3_column_int(queryStatement, 1)))
                 //时间
-                let time = sqlite3_column_double(queryStatement, 3)
+                let time = sqlite3_column_double(queryStatement, 2)
                 item.mCreateDate = Date(timeIntervalSince1970: time)
+                item.mLogFile = String(cString: sqlite3_column_text(queryStatement, 3))
+                item.mLogLine = String(cString: sqlite3_column_text(queryStatement, 4))
+                item.mLogFunction = String(cString: sqlite3_column_text(queryStatement, 5))
+                //更新内容
+                item.mLogContent = String(cString: sqlite3_column_text(queryStatement, 6))
                 logList.append(item)
             }
         }
@@ -52,21 +96,12 @@ class SQLiteTool {
         return logList
     }
     
-    func searchLog(keyword: String) -> [String] {
-        return self._searchLog(keyword: keyword)
-    }
-    
-    func deleteLog(timeStamp: Double) {
-        self._deleteLog(timeStamp: timeStamp)
+    func getItemCount(keyword: String? = nil, type: DDLogType? = nil) -> Int {
+        return self._getItemCount(keyword: keyword, type: type)
     }
 }
 
 private extension SQLiteTool {
-    func changeFileRight() {
-        
-        
-        
-    }
     //打开数据库
     func _openDatabase() -> OpaquePointer? {
         let dbPath = self.logDBPath
@@ -90,57 +125,38 @@ private extension SQLiteTool {
 
 //MARK: - 全文搜索相关
 private extension SQLiteTool {
-    func _searchLog(keyword: String) -> [String] {
+    func _getItemCount(keyword: String? = nil, type: DDLogType? = nil) -> Int {
+        var count = 0
         let databasePath = self.logDBPath
         guard FileManager.default.fileExists(atPath: databasePath.path) else {
             //数据库文件不存在
-            return [String]()
+            return count
         }
-        let queryDB = self.indexDB
-        //TODO: 虚拟表全文查询需要分词，所以使用LIKE
-//        var queryString = "SELECT * FROM logindex WHERE log MATCH '\(keyword)*'"
-        var queryString = "SELECT * FROM logindex WHERE log LIKE '%\(keyword)%'"
-        if keyword.isEmpty {
-            queryString = "SELECT * FROM logindex"
+        let queryDB = self.logDB
+        var queryString = "SELECT COUNT(*) FROM DDLog"
+        var whereClauses: [String] = []
+        if let keyword = keyword, !keyword.isEmpty {
+            whereClauses.append("content LIKE '%\(keyword)%'")
+        }
+        if let type = type {
+            whereClauses.append("logType == \(type.rawValue)")
+        }
+        // 如果有条件，拼接 WHERE 子句
+        if !whereClauses.isEmpty {
+            queryString += " WHERE " + whereClauses.joined(separator: " AND ")
         }
         var queryStatement: OpaquePointer?
         //第一步
-        var logList = [String]()
         if sqlite3_prepare_v2(queryDB, queryString, Int32(strlen(queryString)), &queryStatement, nil) == SQLITE_OK {
             //第二步
             while(sqlite3_step(queryStatement) == SQLITE_ROW) {
                 //第三步
                 //虚拟表中未存储id
-                let log = sqlite3_column_text(queryStatement, 0)
-//                let logType = sqlite3_column_int(queryStatement, 1)
-//                let time = sqlite3_column_double(queryStatement, 2)
-                if let log = log {
-                    logList.append("\(String(cString: log))")
-                }
+                count = Int(sqlite3_column_int(queryStatement, 0))
             }
         }
         //第四步
         sqlite3_finalize(queryStatement)
-        return logList
-    }
-    
-    func _deleteLog(timeStamp: Double) {
-        print(timeStamp)
-        let insertRowString = "DELETE FROM logindex WHERE time < \(timeStamp) "
-        var insertStatement: OpaquePointer?
-        //第一步
-        let status = sqlite3_prepare_v2(self.indexDB, insertRowString, -1, &insertStatement, nil)
-        if status == SQLITE_OK {
-            //第三步
-            if sqlite3_step(insertStatement) == SQLITE_DONE {
-//                print("删除过期数据成功")
-            } else {
-                print("删除过期数据失败")
-            }
-        } else {
-            print("删除时打开虚拟数据库失败")
-        }
-        //第四步
-        sqlite3_finalize(insertStatement)
+        return count
     }
 }

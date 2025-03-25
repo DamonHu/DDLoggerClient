@@ -24,8 +24,8 @@ struct NavMenuItemView: View {
     }
 }
 
-struct NavMenuItemView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavMenuItemView(url: URL(string: "https://www.baidu.com")!, selectedPath: .constant(""))
-    }
-}
+//struct NavMenuItemView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NavMenuItemView(url: URL(string: "https://www.baidu.com")!, selectedPath: .constant(""))
+//    }
+//}

@@ -18,26 +18,28 @@ struct DDLoggerClientCell: View {
                     .frame(width: 5, height: 16, alignment: .center)
                     .background(item.mLogItemType.color())
                     .cornerRadius(6)
-                Text(item.getCreateTime())
+                Text(item.getMessageMeta())
                     .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            Text(item.getFullContentString())
+                    .foregroundColor(Color.white)
+                    .font(.system(size: 14))
+                    .padding(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+            }.background(item.mLogItemType.color()).cornerRadius(3)
+            Text(item.getLogContent())
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(Color.white)
-                .background(item.mLogItemType.color())
+                .foregroundColor(Color.black)
                 .onTapGesture {
                     let pasteBoard = NSPasteboard.general
                     pasteBoard.clearContents()
                     pasteBoard.setString(item.getFullContentString(), forType: .string)
                 }
-                .cornerRadius(6)
+                
         }
     }
 }
 
-struct DDLoggerClientCell_Previews: PreviewProvider {
-    static var previews: some View {
-        DDLoggerClientCell(item: DDLoggerClientItem())
-    }
-}
+//struct DDLoggerClientCell_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DDLoggerClientCell(item: DDLoggerClientItem())
+//    }
+//}

@@ -11,19 +11,17 @@
 		E412A685289678BE0072BC84 /* SQLiteTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = E412A684289678BE0072BC84 /* SQLiteTool.swift */; };
 		E49BE7A2289BC8E3009AF799 /* ConstConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49BE7A1289BC8E3009AF799 /* ConstConfig.swift */; };
 		E49BE7A4289D26FD009AF799 /* LogParseTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49BE7A3289D26FC009AF799 /* LogParseTool.swift */; };
-		E4A048972D8BDBA500DAFFF6 /* DDLoggerSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A048962D8BDBA000DAFFF6 /* DDLoggerSocketManager.swift */; };
-		E4BAF9CC2899068F00C5643A /* NavRemoteMenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4BAF9CB2899068F00C5643A /* NavRemoteMenuItemView.swift */; };
 		E4FB22D128951BF800CAFDD6 /* DDLogger_MACApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22D028951BF800CAFDD6 /* DDLogger_MACApp.swift */; };
 		E4FB22D328951BF800CAFDD6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22D228951BF800CAFDD6 /* ContentView.swift */; };
 		E4FB22D528951BF900CAFDD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4FB22D428951BF900CAFDD6 /* Assets.xcassets */; };
 		E4FB22D828951BF900CAFDD6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4FB22D728951BF900CAFDD6 /* Preview Assets.xcassets */; };
 		E4FB22E22895299D00CAFDD6 /* NavMenuListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22E12895299D00CAFDD6 /* NavMenuListView.swift */; };
-		E4FB22E428952E6900CAFDD6 /* DDLoggerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22E328952E6900CAFDD6 /* DDLoggerItem.swift */; };
+		E4FB22E428952E6900CAFDD6 /* DDLoggerClientItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22E328952E6900CAFDD6 /* DDLoggerClientItem.swift */; };
 		E4FB22E828952FD300CAFDD6 /* String+encode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22E728952FD300CAFDD6 /* String+encode.swift */; };
 		E4FB22EA2895304B00CAFDD6 /* DDLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22E92895304B00CAFDD6 /* DDLogger.swift */; };
 		E4FB22EC289531E400CAFDD6 /* Data+encode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22EB289531E400CAFDD6 /* Data+encode.swift */; };
-		E4FB22EF2895352200CAFDD6 /* DDLoggerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22EE2895352200CAFDD6 /* DDLoggerCell.swift */; };
-		E4FB22F1289538B200CAFDD6 /* DDLoggerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22F0289538B200CAFDD6 /* DDLoggerList.swift */; };
+		E4FB22EF2895352200CAFDD6 /* DDLoggerClientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22EE2895352200CAFDD6 /* DDLoggerClientCell.swift */; };
+		E4FB22F1289538B200CAFDD6 /* DDLoggerClientList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22F0289538B200CAFDD6 /* DDLoggerClientList.swift */; };
 		E4FB22F628953E1E00CAFDD6 /* NavMenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22F528953E1E00CAFDD6 /* NavMenuItemView.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,9 +33,7 @@
 		E412A684289678BE0072BC84 /* SQLiteTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteTool.swift; sourceTree = "<group>"; };
 		E49BE7A1289BC8E3009AF799 /* ConstConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstConfig.swift; sourceTree = "<group>"; };
 		E49BE7A3289D26FC009AF799 /* LogParseTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogParseTool.swift; sourceTree = "<group>"; };
-		E4A048962D8BDBA000DAFFF6 /* DDLoggerSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLoggerSocketManager.swift; sourceTree = "<group>"; };
 		E4A048982D9151AB00DAFFF6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		E4BAF9CB2899068F00C5643A /* NavRemoteMenuItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavRemoteMenuItemView.swift; sourceTree = "<group>"; };
 		E4FB22CD28951BF800CAFDD6 /* DDLoggerClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DDLoggerClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4FB22D028951BF800CAFDD6 /* DDLogger_MACApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLogger_MACApp.swift; sourceTree = "<group>"; };
 		E4FB22D228951BF800CAFDD6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -45,12 +41,12 @@
 		E4FB22D728951BF900CAFDD6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E4FB22D928951BF900CAFDD6 /* DDLoggerClient.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DDLoggerClient.entitlements; sourceTree = "<group>"; };
 		E4FB22E12895299D00CAFDD6 /* NavMenuListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavMenuListView.swift; sourceTree = "<group>"; };
-		E4FB22E328952E6900CAFDD6 /* DDLoggerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DDLoggerItem.swift; sourceTree = "<group>"; };
+		E4FB22E328952E6900CAFDD6 /* DDLoggerClientItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DDLoggerClientItem.swift; sourceTree = "<group>"; };
 		E4FB22E728952FD300CAFDD6 /* String+encode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+encode.swift"; sourceTree = "<group>"; };
 		E4FB22E92895304B00CAFDD6 /* DDLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLogger.swift; sourceTree = "<group>"; };
 		E4FB22EB289531E400CAFDD6 /* Data+encode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+encode.swift"; sourceTree = "<group>"; };
-		E4FB22EE2895352200CAFDD6 /* DDLoggerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLoggerCell.swift; sourceTree = "<group>"; };
-		E4FB22F0289538B200CAFDD6 /* DDLoggerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLoggerList.swift; sourceTree = "<group>"; };
+		E4FB22EE2895352200CAFDD6 /* DDLoggerClientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLoggerClientCell.swift; sourceTree = "<group>"; };
+		E4FB22F0289538B200CAFDD6 /* DDLoggerClientList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLoggerClientList.swift; sourceTree = "<group>"; };
 		E4FB22F528953E1E00CAFDD6 /* NavMenuItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavMenuItemView.swift; sourceTree = "<group>"; };
 		F6B0D0EE98B35DA8FC265208 /* Pods_DDLoggerClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DDLoggerClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -142,7 +138,6 @@
 		E4FB22F228953D8700CAFDD6 /* tools */ = {
 			isa = PBXGroup;
 			children = (
-				E4A048962D8BDBA000DAFFF6 /* DDLoggerSocketManager.swift */,
 				E412A684289678BE0072BC84 /* SQLiteTool.swift */,
 				E49BE7A3289D26FC009AF799 /* LogParseTool.swift */,
 			);
@@ -154,10 +149,9 @@
 			children = (
 				E4FB22D228951BF800CAFDD6 /* ContentView.swift */,
 				E4FB22E12895299D00CAFDD6 /* NavMenuListView.swift */,
-				E4FB22EE2895352200CAFDD6 /* DDLoggerCell.swift */,
-				E4FB22F0289538B200CAFDD6 /* DDLoggerList.swift */,
+				E4FB22EE2895352200CAFDD6 /* DDLoggerClientCell.swift */,
+				E4FB22F0289538B200CAFDD6 /* DDLoggerClientList.swift */,
 				E4FB22F528953E1E00CAFDD6 /* NavMenuItemView.swift */,
-				E4BAF9CB2899068F00C5643A /* NavRemoteMenuItemView.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -165,7 +159,7 @@
 		E4FB22F428953DE400CAFDD6 /* model */ = {
 			isa = PBXGroup;
 			children = (
-				E4FB22E328952E6900CAFDD6 /* DDLoggerItem.swift */,
+				E4FB22E328952E6900CAFDD6 /* DDLoggerClientItem.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -268,19 +262,17 @@
 			files = (
 				E4FB22F628953E1E00CAFDD6 /* NavMenuItemView.swift in Sources */,
 				E4FB22E22895299D00CAFDD6 /* NavMenuListView.swift in Sources */,
-				E4FB22E428952E6900CAFDD6 /* DDLoggerItem.swift in Sources */,
-				E4FB22F1289538B200CAFDD6 /* DDLoggerList.swift in Sources */,
+				E4FB22E428952E6900CAFDD6 /* DDLoggerClientItem.swift in Sources */,
+				E4FB22F1289538B200CAFDD6 /* DDLoggerClientList.swift in Sources */,
 				E4FB22EA2895304B00CAFDD6 /* DDLogger.swift in Sources */,
-				E4BAF9CC2899068F00C5643A /* NavRemoteMenuItemView.swift in Sources */,
 				E49BE7A2289BC8E3009AF799 /* ConstConfig.swift in Sources */,
 				E412A685289678BE0072BC84 /* SQLiteTool.swift in Sources */,
 				E4FB22E828952FD300CAFDD6 /* String+encode.swift in Sources */,
 				E4FB22D328951BF800CAFDD6 /* ContentView.swift in Sources */,
 				E4FB22D128951BF800CAFDD6 /* DDLogger_MACApp.swift in Sources */,
 				E49BE7A4289D26FD009AF799 /* LogParseTool.swift in Sources */,
-				E4FB22EF2895352200CAFDD6 /* DDLoggerCell.swift in Sources */,
+				E4FB22EF2895352200CAFDD6 /* DDLoggerClientCell.swift in Sources */,
 				E4FB22EC289531E400CAFDD6 /* Data+encode.swift in Sources */,
-				E4A048972D8BDBA500DAFFF6 /* DDLoggerSocketManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

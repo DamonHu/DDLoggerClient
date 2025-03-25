@@ -14,107 +14,96 @@ class LogParseTool {
         self.logPath = path
     }
 
-    func getAllLog() -> [DDLoggerClientItem] {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        //TODO: 格式化数据并解析
+    func getLogs(keyword: String? = nil) -> [DDLoggerClientItem] {
         if let contentData = try? Data(contentsOf: self.logPath), let content = String(data: contentData, encoding: .utf8) {
-            let contentList = content.split(separator: "\n")
-
-            var titleIndexList = [Int]()
-            for i in 0..<contentList.count {
-                let item = contentList[i]
-                //判断时间
-                if self.isTitle(log: String(item)) {
-                    titleIndexList.append(i)
-                }
+            let logs = splitLogEntries(from: content)
+            var list = logs.compactMap { parseLogEntry($0) }
+            if let keyword = keyword, !keyword.isEmpty {
+                list = list.filter({ item in
+                    return item.getLogContent().contains(keyword)
+                })
             }
-
-            //数据
-            var logList = [DDLoggerClientItem]()
-            for i in 0..<titleIndexList.count {
-                let titleIndex = titleIndexList[i]
-                //组装数据
-                let title = String(contentList[titleIndex])
-                let item = DDLoggerClientItem()
-                //时间
-                let timeString = title.subString(rang: NSRange(location: 0, length: 23))
-                item.mCreateDate = dateFormatter.date(from: timeString)!
-                //类型
-                if title.contains("✅✅") {
-                    item.mLogItemType = .info
-                } else if title.contains("⚠️⚠️") {
-                    item.mLogItemType = .warn
-                } else if title.contains("❌❌") {
-                    item.mLogItemType = .error
-                } else if title.contains("⛔️⛔️") {
-                    item.mLogItemType = .privacy
-                } else if title.contains("💜💜") {
-                    item.mLogItemType = .debug
-                }
-                //debugContent
-                item.mLogDebugContent = title.subString(rang: NSRange(location: 42, length: title.count - 42))
-                //content
-                if i == titleIndexList.count-1 {
-                    //最后一个数组
-                    let contentLog = contentList[titleIndex + 1..<contentList.endIndex].joined(separator: "\n")
-                    item.updateLogContent(type: item.mLogItemType, content: contentLog)
-                } else {
-                    let contentLog = contentList[titleIndex + 1..<titleIndexList[i + 1]].joined(separator: "\n")
-                    item.updateLogContent(type: item.mLogItemType, content: contentLog)
-                }
-
-                logList.append(item)
-            }
-            return logList
+            return list
         }
         return []
     }
 }
 
 private extension LogParseTool {
-    func isTitle(log: String) -> Bool {
-        //长度解析
-        guard log.count > 42 else {
-            return false
+    // 解析单条日志的函数
+    func parseLogEntry(_ log: String) -> DDLoggerClientItem? {
+        let pattern = #"(\S+) \[(\S+)\] \[([A-Z]+)\] File: (\S+) \| Line: (\d+) \| Function: (\S+)\s*-*\n(.+)"#
+        
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.dotMatchesLineSeparators]) else {
+            return nil
         }
-        //时间判断
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        let timeString = log.subString(rang: NSRange(location: 0, length: 23))
-        if dateFormatter.date(from: timeString) == nil {
-            return false
+        
+        let nsLog = log as NSString
+        let matches = regex.matches(in: log, options: [], range: NSRange(location: 0, length: nsLog.length))
+        
+        guard let match = matches.first, match.numberOfRanges == 8 else {
+            return nil
         }
-        //类型解析
-        let regex = "---- [ ✅⚠️❌⛔️💜]"
-        let result = RegularExpression(regex: regex, validateString: log)
-        if result.isEmpty {
-            return false
+        
+        // 提取匹配的内容
+//        let test = nsLog.substring(with: match.range(at: 0))
+//        let icon = nsLog.substring(with: match.range(at: 1))
+        let dateString = nsLog.substring(with: match.range(at: 2))
+        let logType = nsLog.substring(with: match.range(at: 3))
+        let file = nsLog.substring(with: match.range(at: 4))
+        let lineString = nsLog.substring(with: match.range(at: 5))
+        let function = nsLog.substring(with: match.range(at: 6))
+        let message = nsLog.substring(with: match.range(at: 7))
+        
+        // 日期解析
+        let dateFormatter = ISO8601DateFormatter()
+        guard let date = dateFormatter.date(from: dateString) else {
+            return nil
         }
-        //关键词匹配
-        return log.contains("File:") && log.contains("Line:")
+        
+        let item = DDLoggerClientItem()
+        item.mCreateDate = date
+        item.mLogItemType = DDLogType.type(title: logType)
+        item.mLogFile = file
+        item.mLogLine = lineString
+        item.mLogFunction = function
+        item.mLogContent = message
+        
+        return item
     }
 
-    /// 正则匹配
-    /// - Parameters:
-    ///   - regex: 匹配规则
-    ///   - validateString: 匹配对test象
-    /// - Returns: 返回结果
-    func RegularExpression (regex:String,validateString:String) -> [String]{
-        do {
-            let regex: NSRegularExpression = try NSRegularExpression(pattern: regex, options: [])
-            let matches = regex.matches(in: validateString, options: [], range: NSMakeRange(0, validateString.count))
-
-            var data:[String] = Array()
-            for item in matches {
-                let string = (validateString as NSString).substring(with: item.range)
-                data.append(string)
-            }
-
-            return data
-        }
-        catch {
+    // 使用正则表达式匹配日志头部并分割
+    func splitLogEntries(from content: String) -> [String] {
+        let pattern = #"(✅|\⛔️|⚠️|❌|💜) \[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\]"#
+        
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
             return []
         }
+        
+        let nsContent = content as NSString
+        let matches = regex.matches(in: content, options: [], range: NSRange(location: 0, length: nsContent.length))
+        
+        var result: [String] = []
+        var lastIndex = 0
+        
+        for match in matches {
+            let range = match.range.location
+            if lastIndex < range {
+                let logEntry = nsContent.substring(with: NSRange(location: lastIndex, length: range - lastIndex)).trimmingCharacters(in: .whitespacesAndNewlines)
+                if !logEntry.isEmpty {
+                    result.append(logEntry)
+                }
+            }
+            lastIndex = range
+        }
+        
+        if lastIndex < nsContent.length {
+            let lastLogEntry = nsContent.substring(from: lastIndex).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !lastLogEntry.isEmpty {
+                result.append(lastLogEntry)
+            }
+        }
+        
+        return result
     }
 }

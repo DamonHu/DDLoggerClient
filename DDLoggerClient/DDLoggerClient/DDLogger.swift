@@ -28,15 +28,34 @@ extension DDLogType {
         case .debug:
             return Color(red: 191.0/255.0, green: 139.0/255.0, blue: 251.0/255.0)
         case .info:
-            return Color(red: 80.0/255.0, green: 216.0/255.0, blue: 144.0/255.0)
+//            return Color(red: 80.0/255.0, green: 216.0/255.0, blue: 144.0/255.0, opacity: 0.8)
+            return Color(red: 95.0/255.0, green: 139.0/255.0, blue: 76.0/255.0)
         case .warn:
-            return Color(red: 255.0/255.0, green: 191.0/255.0, blue: 0.0/255.0)
+//            return Color(red: 255.0/255.0, green: 191.0/255.0, blue: 0.0/255.0)
+            return Color(red: 217.0/255.0, green: 131.0/255.0, blue: 36.0/255.0)
         case .error:
-            return Color(red: 229.0/255.0, green: 43.0/255.0, blue: 80.0/255.0)
+//            return Color(red: 229.0/255.0, green: 43.0/255.0, blue: 80.0/255.0)
+            return Color(red: 169.0/255.0, green: 74.0/255.0, blue: 74.0/255.0)
         case .privacy:
             return Color(red: 165.0/255.0, green: 42.0/255.0, blue: 42.0/255.0)
         default:
             return .black
+        }
+    }
+}
+
+extension DDLogType {
+    static func type(title: String) -> DDLogType {
+        if title == "INFO" {
+            return .info
+        } else if title == "WARN" {
+            return .warn
+        } else if title == "ERROR" {
+            return .error
+        } else if title == "PRIVACY" {
+            return .privacy
+        } else {
+            return .debug
         }
     }
 }
@@ -51,7 +70,4 @@ public class DDLoggerClient {
     public static var privacyLogPassword = "12345678901234561234567890123456"
     public static var privacyLogIv = "abcdefghijklmnop"
     public static var privacyResultEncodeType = ZXKitUtilEncodeType.hex
-    
-    /**实时日志功能**/
-    public static var socketType: String = "_DDLoggerSwift"//支持自定义
 }
