@@ -25,17 +25,27 @@ struct DDLoggerClientCell: View {
                     .font(.system(size: 14))
                     .padding(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
             }.background(item.mLogItemType.color()).cornerRadius(3)
+                
             Text(item.getLogContent())
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .foregroundColor(Color.black)
-                .background(isSelected ? Color(red: 0/255.0, green: 48.0/255.0, blue: 146.0/255.0, opacity: 0.4) : Color.clear)
-                .onTapGesture {
-                    let pasteBoard = NSPasteboard.general
-                    pasteBoard.clearContents()
-                    pasteBoard.setString(item.getFullContentString(), forType: .string)
-                }
-                
+                .background(isSelected ? Color(red: 193/255.0, green: 70.0/255.0, blue: 0.0/255.0, opacity: 0.9) : Color(red: 246/255.0, green: 246.0/255.0, blue: 246.0/255.0))
+        }
+        .onTapGesture {
+            let pasteBoard = NSPasteboard.general
+            pasteBoard.clearContents()
+            pasteBoard.setString(item.getFullContentString(), forType: .string)
+            print("Copied to clipboard: \(item.getFullContentString())")
+        }.contextMenu {
+            Button(action: {
+                let pasteBoard = NSPasteboard.general
+                pasteBoard.clearContents()
+                pasteBoard.setString(item.getFullContentString(), forType: .string)
+                print("Copied to clipboard: \(item.getFullContentString())")
+            }) {
+                Text("复制日志")
+            }
         }
     }
 }
