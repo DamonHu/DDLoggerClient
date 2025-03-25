@@ -45,7 +45,7 @@ extension DDLogType {
 }
 
 extension DDLogType {
-    static func type(title: String) -> DDLogType {
+    static func type(title: String) -> DDLogType? {
         if title == "INFO" {
             return .info
         } else if title == "WARN" {
@@ -54,8 +54,10 @@ extension DDLogType {
             return .error
         } else if title == "PRIVACY" {
             return .privacy
-        } else {
+        } else if title == "DEBUG" {
             return .debug
+        } else {
+            return nil
         }
     }
 }

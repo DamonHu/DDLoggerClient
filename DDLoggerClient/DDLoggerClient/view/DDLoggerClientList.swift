@@ -9,33 +9,116 @@ import SwiftUI
 
 struct DDLoggerClientList: View {
     @Binding var list: [DDLoggerClientItem]
-    @Binding var searchText: String
+    @Binding var filterText: String
+    @Binding var selectedType: String
     
-    @State private var typeText: String = ""
+    @State var searchText: String = ""
+    @State private var tempFilterText: String = ""
+    @State private var tempSearchText: String = ""
+    @State private var selectedIndex: Int? = nil        //滚动索引到第几个
+    @State private var filteredIndices: [Int] = []  // 存储搜索结果的索引
     
-    
+    let options = ["ALL", "INFO", "WARN", "ERROR", "PRIVACY"]
     
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
-            Text("搜索")
-                .frame(width: 50, alignment: .center)
-            TextField("输入查找内容，回车确定", text: $typeText, onCommit: {
-                self.searchText = self.typeText
-            })
-                .frame(height: 24)
-                .border(.gray, width: 0.5)
-                .textFieldStyle(.plain)
-                .onChange(of: searchText) { newValue in
-                    print("searchText has been updated to: \(newValue)")
+        VStack(alignment: .trailing, spacing: 0) {
+            HStack(alignment: .center, spacing: 10) {
+                Text("过滤")
+                    .frame(width: 50, alignment: .center)
+                TextField("输入过滤内容，回车确定", text: $tempFilterText, onCommit: {
+                    self.filterText = self.tempFilterText
+                })
+                    .frame(height: 24)
+                    .border(.gray, width: 0.5)
+                    .textFieldStyle(.plain)
+                
+                Picker("日志等级", selection: $selectedType) {
+                     ForEach(0..<options.count, id: \.self) { index in
+                         Text(options[index]).tag(options[index])
+                      }
                 }
-            Button("重置") {
-                self.typeText = ""
-                self.searchText = ""
-            }.frame(height: 30)
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20))
-        }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
-        List(list, id: \.identifier) { item in
-            DDLoggerClientCell(item: item)
-        }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+                .pickerStyle(MenuPickerStyle()) // 使用下拉样式
+                Button("清空过滤条件") {
+                    self.tempFilterText = ""
+                    self.filterText = ""
+                    self.selectedType = "ALL"
+                }.frame(height: 30)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20))
+            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+            //查找
+            HStack(alignment: .center, spacing: 10) {
+                Text("查找")
+                    .frame(width: 50, alignment: .center)
+                TextField("输入查找内容，回车确定", text: $tempSearchText, onCommit: {
+                    self.searchText = self.tempSearchText
+                    //搜索内容
+                    self.selectedIndex = nil
+                    self.filteredIndices = []
+                    for i in 0..<list.count {
+                        let item = list[i]
+                        if item.getLogContent().contains(self.searchText) {
+                            self.filteredIndices.append(i)
+                        }
+                    }
+                    if !self.filteredIndices.isEmpty {
+                        self.selectedIndex = 0
+                    }
+                })
+                    .frame(height: 24)
+                    .border(.gray, width: 0.5)
+                    .textFieldStyle(.plain)
+                Text(" \(self.selectedIndex == nil ? "" : "\(self.selectedIndex! + 1)" + "/" + "\(self.filteredIndices.count)")")
+                    .frame(width: 50, alignment: .center)
+                    .foregroundColor(Color.gray)
+                Button("上一条") {
+                    guard let index = self.selectedIndex else { return }
+                    //
+                    if self.selectedIndex == 0 {
+                        self.selectedIndex = self.filteredIndices.count - 1
+                    } else {
+                        self.selectedIndex = index - 1
+                    }
+                }.disabled(self.selectedIndex == nil).frame(height: 30).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 5))
+                Button("下一条") {
+                    guard let index = self.selectedIndex else {
+                        return
+                    }
+                    if self.selectedIndex == self.filteredIndices.count - 1 {
+                        self.selectedIndex = 0
+                    } else {
+                        self.selectedIndex = index + 1
+                    }
+                }.disabled(self.selectedIndex == nil).frame(height: 30).padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20))
+            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+        }
+        
+        ScrollViewReader { proxy in
+            List(list.indices, id: \.self) { index in
+                let item = list[index]
+                DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index)
+                            .id(index)
+            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+                .onChange(of: selectedIndex) { newValue in
+                    guard let index = self.selectedIndex else {
+                        return
+                    }
+                    if self.filteredIndices.isEmpty { return }
+                    
+                    let filteredIndice = self.filteredIndices[index]
+                    print("filteredIndices", self.filteredIndices, filteredIndice)
+//                    proxy.scrollTo(filteredIndice, anchor: .center)
+//                    DispatchQueue.main.async {
+//                                proxy.scrollTo(filteredIndice, anchor: .center)
+//                            }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                withAnimation {
+                                    proxy.scrollTo(filteredIndice, anchor: .center)
+                                }
+                            }
+                }
+        }
+        
+        
     }
 }

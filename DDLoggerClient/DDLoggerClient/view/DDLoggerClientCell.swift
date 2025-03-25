@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DDLoggerClientCell: View {
     var item: DDLoggerClientItem
+    var isSelected: Bool
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 10) {
@@ -28,6 +29,7 @@ struct DDLoggerClientCell: View {
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .foregroundColor(Color.black)
+                .background(isSelected ? Color(red: 0/255.0, green: 48.0/255.0, blue: 146.0/255.0, opacity: 0.4) : Color.clear)
                 .onTapGesture {
                     let pasteBoard = NSPasteboard.general
                     pasteBoard.clearContents()

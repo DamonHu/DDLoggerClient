@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var list: [DDLoggerClientItem] = []
-    @State private var searchText: String = ""
+    @State private var filterText: String = ""
+    @State private var filterType: String = "ALL"
     @State private var selectedPath: String?
     
     var body: some View {
@@ -17,8 +18,11 @@ struct ContentView: View {
             NavMenuListView(list: $list, selectedPath: $selectedPath).onChange(of: selectedPath) { newValue in
                 self.updateList()
             }
-            DDLoggerClientList(list: $list, searchText: $searchText).onChange(of: searchText) { newValue in
+            DDLoggerClientList(list: $list, filterText: $filterText, selectedType: $filterType).onChange(of: filterText) { newValue in
                 print("searchText updated to: \(newValue)")
+                self.updateList()
+            }.onChange(of: filterType) { newValue in
+                print("searchType updated to: \(newValue)")
                 self.updateList()
             }
         }.navigationTitle("DDLoggerClient")
@@ -34,11 +38,11 @@ extension ContentView {
         if path.hasSuffix(".db") {
             //解析log日志
             let tool = SQLiteTool(path: URL.init(fileURLWithPath: path))
-            list = tool.getLogs(keyword: self.searchText)
+            list = tool.getLogs(keyword: self.filterText, type: DDLogType.type(title: self.filterType))
         } else if path.hasSuffix(".log") {
             //解析log文件
             let tool = LogParseTool(path: URL.init(fileURLWithPath: path))
-            list = tool.getLogs(keyword: self.searchText)
+            list = tool.getLogs(keyword: self.filterText, type: DDLogType.type(title: self.filterType))
         }
     }
 }

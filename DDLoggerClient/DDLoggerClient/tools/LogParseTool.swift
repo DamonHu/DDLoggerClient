@@ -14,13 +14,18 @@ class LogParseTool {
         self.logPath = path
     }
 
-    func getLogs(keyword: String? = nil) -> [DDLoggerClientItem] {
+    func getLogs(keyword: String? = nil, type: DDLogType? = nil) -> [DDLoggerClientItem] {
         if let contentData = try? Data(contentsOf: self.logPath), let content = String(data: contentData, encoding: .utf8) {
             let logs = splitLogEntries(from: content)
             var list = logs.compactMap { parseLogEntry($0) }
             if let keyword = keyword, !keyword.isEmpty {
                 list = list.filter({ item in
                     return item.getLogContent().contains(keyword)
+                })
+            }
+            if let type = type {
+                list = list.filter({ item in
+                    return item.mLogItemType == type
                 })
             }
             return list
@@ -63,7 +68,7 @@ private extension LogParseTool {
         
         let item = DDLoggerClientItem()
         item.mCreateDate = date
-        item.mLogItemType = DDLogType.type(title: logType)
+        item.mLogItemType = DDLogType.type(title: logType) ?? .debug
         item.mLogFile = file
         item.mLogLine = lineString
         item.mLogFunction = function
