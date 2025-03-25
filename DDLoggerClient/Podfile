@@ -6,5 +6,5 @@ target 'DDLoggerClient' do
   use_frameworks!
 
   # Pods for DDLoggerClient
-  pod 'CocoaAsyncSocket'
+  
 end

@@ -20,7 +20,7 @@ struct NavMenuListView: View {
     @State private var privacyLogIv = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogIv.rawValue) ?? DDLoggerClient.privacyLogIv
     @State private var isEncodeBase64 = UserDefaults.standard.bool(forKey: UserDefaultsKey.isEncodeBase64.rawValue)
     //服务器配置
-    @State private var domainText = UserDefaults.standard.string(forKey: UserDefaultsKey.domain.rawValue) ?? DDLoggerClient.socketDomain
+//    @State private var domainText = UserDefaults.standard.string(forKey: UserDefaultsKey.domain.rawValue) ?? DDLoggerClient.socketDomain
     @State private var typeText =  UserDefaults.standard.string(forKey: UserDefaultsKey.socketType.rawValue) ?? DDLoggerClient.socketType
     @State private var fileList: [URL] = [] {
         willSet {
@@ -97,7 +97,7 @@ struct NavMenuListView: View {
                         .frame(width: 20, height: 20, alignment: .center)
                         .onTapGesture {
                             print("刷新")
-                            DDLoggerClient.socketDomain = domainText
+//                            DDLoggerClient.socketDomain = domainText
                             DDLoggerClient.socketType = typeText
                             self._startSocketConnect()
                         }
@@ -162,10 +162,10 @@ struct NavMenuListView: View {
                     HStack(alignment: .center, spacing: 4) {
                         Text("Domain")
                             .frame(width: 70, alignment: .center)
-                        TextField("local", text: $domainText)
-                            .frame(height: 24)
-                            .border(.gray, width: 0.5)
-                            .textFieldStyle(.plain)
+//                        TextField("local", text: $domainText)
+//                            .frame(height: 24)
+//                            .border(.gray, width: 0.5)
+//                            .textFieldStyle(.plain)
                         
                     }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                     HStack(alignment: .center, spacing: 4) {
@@ -184,13 +184,13 @@ struct NavMenuListView: View {
                                 return
                             }
                             isEditConfig = false
-                            DDLoggerClient.socketDomain = domainText
+//                            DDLoggerClient.socketDomain = domainText
                             DDLoggerClient.socketType = typeText
                             DDLoggerClient.privacyLogPassword = privacyLogPassword
                             DDLoggerClient.privacyLogIv = privacyLogIv
                             DDLoggerClient.privacyResultEncodeType = isEncodeBase64 ? .base64 : .hex
                             
-                            UserDefaults.standard.set(domainText, forKey: UserDefaultsKey.domain.rawValue)
+//                            UserDefaults.standard.set(domainText, forKey: UserDefaultsKey.domain.rawValue)
                             UserDefaults.standard.set(typeText, forKey: UserDefaultsKey.socketType.rawValue)
                             UserDefaults.standard.set(privacyLogPassword, forKey: UserDefaultsKey.privacyLogPassword.rawValue)
                             UserDefaults.standard.set(privacyLogIv, forKey: UserDefaultsKey.privacyLogIv.rawValue)
@@ -294,26 +294,27 @@ struct NavMenuListView: View {
 private extension NavMenuListView {
     func _startSocketConnect() {
         self.isConnecting = true
-        DDLoggerClientBonjour.shared.bonjourDidConnectHandler = { name, host, port in
+        DDLoggerSocketManager.shared.bonjourDidConnectHandler = { name in
             self.isConnecting = false
-            let title = "\(name) - \(host): \(port)"
+            let title = "\(name)"
             if !remoteList.contains(title) {
                 remoteList.append(title)
             }
             self.selectedPath = title
         }
-        DDLoggerClientBonjour.shared.socketDidReceiveHandler = { host, port, item in
+        DDLoggerSocketManager.shared.socketDidReceiveHandler = { name, item in
             //插入全局
             if let selectedPath = self.selectedPath {
                 var list = remoteLogList[selectedPath] ?? []
                 list.insert(item, at: 0)
                 remoteLogList[selectedPath] = list
-                if selectedPath.contains("\(host): \(port)") {
-                    self.list.insert(item, at: 0)
+                if selectedPath.contains("\(name)") {
+//                    self.list.insert(item, at: 0)
+                    self.list.append(item)
                 }
             }
         }
-        DDLoggerClientBonjour.shared.start()
+        DDLoggerSocketManager.shared.start()
     }
 }
 
