@@ -3,61 +3,61 @@
     {
       "size" : "16x16",
       "idiom" : "mac",
-      "filename" : "favicon_bMacMicro_16pt.png",
+      "filename" : "logo-borderMacMicro_16pt.png",
       "scale" : "1x"
     },
     {
       "size" : "16x16",
       "idiom" : "mac",
-      "filename" : "favicon_bMacMicro_16pt@2x.png",
+      "filename" : "logo-borderMacMicro_16pt@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "favicon_bMacSmall_32pt.png",
+      "filename" : "logo-borderMacSmall_32pt.png",
       "scale" : "1x"
     },
     {
       "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "favicon_bMacSmall_32pt@2x.png",
+      "filename" : "logo-borderMacSmall_32pt@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "favicon_bMacMedium_128pt.png",
+      "filename" : "logo-borderMacMedium_128pt.png",
       "scale" : "1x"
     },
     {
       "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "favicon_bMacMedium_128pt@2x.png",
+      "filename" : "logo-borderMacMedium_128pt@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "256x256",
       "idiom" : "mac",
-      "filename" : "favicon_bMacLarge_256pt.png",
+      "filename" : "logo-borderMacLarge_256pt.png",
       "scale" : "1x"
     },
     {
       "size" : "256x256",
       "idiom" : "mac",
-      "filename" : "favicon_bMacLarge_256pt@2x.png",
+      "filename" : "logo-borderMacLarge_256pt@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "favicon_bMacHuge_512pt.png",
+      "filename" : "logo-borderMacHuge_512pt.png",
       "scale" : "1x"
     },
     {
       "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "favicon_bMacHuge_512pt@2x.png",
+      "filename" : "logo-borderMacHuge_512pt@2x.png",
       "scale" : "2x"
     }
   ],
