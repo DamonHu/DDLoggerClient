@@ -12,7 +12,7 @@
 
 [Releases](https://github.com/DamonHu/DDLoggerClient/releases)，下载`Release`中的`dmg`文件，拖拽进应用程序即可
 
-## 本地日志
+## 查看日志
 
 将`DDLoggerSwift`生成的`.db`文件、或者通过分享导出的`.log`文件，直接拖进左侧菜单栏，即可自动解析并根据日志类型显示颜色，可以进行搜索过滤等操作。
 
