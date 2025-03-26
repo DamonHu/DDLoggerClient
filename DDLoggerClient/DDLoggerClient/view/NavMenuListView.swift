@@ -32,6 +32,7 @@ struct NavMenuListView: View {
     @State private var isEditConfig = false  //是否编辑修改
     @State private var isConnecting = false  //是否在连接远程服务器
     @State private var isPrivacyError = false
+    @State private var isShowFileAlert = false
     
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
@@ -170,13 +171,10 @@ struct NavMenuListView: View {
                 List(self.fileList, id: \.path) { i in
                     NavMenuItemView(url: i, selectedPath: $selectedPath)
                         .onTapGesture {
-                            if FileManager.default.fileExists(atPath: i.path) {
-                                selectedPath = i.path
-                            } else {
-                                print("文件不存在：\(i.path)")
-                                //TODO: 文件不存在
+                            selectedPath = i.path
+                            if !FileManager.default.fileExists(atPath: i.path) {
+                                self.isShowFileAlert = true
                             }
-                            
                         }.contextMenu {
                             VStack(alignment: .trailing, spacing: 10) {
                                 Button(action: {
@@ -194,10 +192,24 @@ struct NavMenuListView: View {
                                         self.selectedPath = nil
                                     }
                                 }) {
-                                    Text("从列表删除")
+                                    Text("删除引用 (保留源文件)")
                                 }
                             }
                         }
+                }.alert("文件不存在", isPresented: $isShowFileAlert) {
+                    Button("删除", role: .destructive) {
+                        if let index = fileList.firstIndex(where: { url in
+                            return url.path == selectedPath
+                        }) {
+                            fileList.remove(at: index)
+                        }
+                        selectedPath = nil
+                    }
+                    Button("取消", role: .cancel) {
+                        selectedPath = nil
+                    }
+                } message: {
+                    Text("该文件不存在，是否删除引用路径")
                 }
                 if self.fileList.isEmpty {
                     List {

@@ -14,6 +14,7 @@ struct DDLoggerClientFavList: View {
     @State private var tempSearchText: String = ""
     @State private var selectedIndex: Int? = nil        //滚动索引到第几个
     @State private var filteredIndices: [Int] = []  // 存储搜索结果的索引
+    @State private var isShowDeleteAlert = false
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
@@ -24,11 +25,20 @@ struct DDLoggerClientFavList: View {
                     .frame(width: 20, height: 20, alignment: .center)
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                     .onTapGesture {
-                        self.list = []
-                        self.searchText = ""
-                        self.tempSearchText = ""
-                        self.selectedIndex = nil
-                        self.filteredIndices = []
+                        self.isShowDeleteAlert = true
+                    }.alert("清空记录", isPresented: $isShowDeleteAlert) {
+                        Button("确认清空", role: .destructive) {
+                            self.list = []
+                            self.searchText = ""
+                            self.tempSearchText = ""
+                            self.selectedIndex = nil
+                            self.filteredIndices = []
+                        }
+                        Button("取消", role: .cancel) {
+
+                        }
+                    } message: {
+                        Text("请确认是否清空收藏记录")
                     }
                 Text("查找")
                     .frame(width: 50, alignment: .center)
