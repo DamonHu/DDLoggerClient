@@ -19,7 +19,7 @@ struct NavMenuItemView: View {
             Text(url.lastPathComponent)
                 .foregroundColor(selectedPath == url.path ? .black : .gray)
                 .lineLimit(2)
-        }
+        }.padding(EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10))
         
     }
 }

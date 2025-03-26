@@ -34,12 +34,12 @@ struct NavMenuListView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
             HStack(alignment: .center, spacing: 0) {
-                Button("本地日志") {
+                Button("DDLogger") {
                     self.isConnecting = false
                     self.selectedPath = nil
-                }.background(.green)
-                    .foregroundColor(.white)
-                    .frame(height: 40)
+                }.font(.system(size: 14)).padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)).foregroundColor(Color.white).background(.black).buttonStyle(PlainButtonStyle())
+                    
+                .frame(height: 40)
                 Image("icon_setting")
                     .resizable()
                     .frame(width: 20, height: 20, alignment: .center)
@@ -150,6 +150,12 @@ struct NavMenuListView: View {
                     NavMenuItemView(url: i, selectedPath: $selectedPath)
                         .onTapGesture {
                             selectedPath = i.path
+                        }.contextMenu {
+                            Button(action: {
+                                NSWorkspace.shared.selectFile(i.path, inFileViewerRootedAtPath: "")
+                            }) {
+                                Text("在Finder中显示")
+                            }
                         }
                 }
                 if self.fileList.isEmpty {
