@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B257F5BDDF79C21B232A7C30 /* Pods_DDLoggerClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0D0EE98B35DA8FC265208 /* Pods_DDLoggerClient.framework */; };
 		E412A685289678BE0072BC84 /* SQLiteTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = E412A684289678BE0072BC84 /* SQLiteTool.swift */; };
+		E45CD9E72D93C39100FE87E8 /* DDLoggerClientFavList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45CD9E62D93C39000FE87E8 /* DDLoggerClientFavList.swift */; };
 		E49BE7A2289BC8E3009AF799 /* ConstConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49BE7A1289BC8E3009AF799 /* ConstConfig.swift */; };
 		E49BE7A4289D26FD009AF799 /* LogParseTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49BE7A3289D26FC009AF799 /* LogParseTool.swift */; };
 		E4FB22D128951BF800CAFDD6 /* DDLogger_MACApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22D028951BF800CAFDD6 /* DDLogger_MACApp.swift */; };
@@ -31,6 +32,7 @@
 		691DA08D60BF6546F02D72E1 /* Pods-DDLoggerClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DDLoggerClient.release.xcconfig"; path = "Target Support Files/Pods-DDLoggerClient/Pods-DDLoggerClient.release.xcconfig"; sourceTree = "<group>"; };
 		6F99287F9EEE7551DAFDA44D /* Pods-ZXKitLogger_MAC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZXKitLogger_MAC.debug.xcconfig"; path = "Target Support Files/Pods-ZXKitLogger_MAC/Pods-ZXKitLogger_MAC.debug.xcconfig"; sourceTree = "<group>"; };
 		E412A684289678BE0072BC84 /* SQLiteTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteTool.swift; sourceTree = "<group>"; };
+		E45CD9E62D93C39000FE87E8 /* DDLoggerClientFavList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLoggerClientFavList.swift; sourceTree = "<group>"; };
 		E49BE7A1289BC8E3009AF799 /* ConstConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstConfig.swift; sourceTree = "<group>"; };
 		E49BE7A3289D26FC009AF799 /* LogParseTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogParseTool.swift; sourceTree = "<group>"; };
 		E4A048982D9151AB00DAFFF6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 		E4FB22F328953DC100CAFDD6 /* view */ = {
 			isa = PBXGroup;
 			children = (
+				E45CD9E62D93C39000FE87E8 /* DDLoggerClientFavList.swift */,
 				E4FB22D228951BF800CAFDD6 /* ContentView.swift */,
 				E4FB22E12895299D00CAFDD6 /* NavMenuListView.swift */,
 				E4FB22EE2895352200CAFDD6 /* DDLoggerClientCell.swift */,
@@ -270,6 +273,7 @@
 				E4FB22E828952FD300CAFDD6 /* String+encode.swift in Sources */,
 				E4FB22D328951BF800CAFDD6 /* ContentView.swift in Sources */,
 				E4FB22D128951BF800CAFDD6 /* DDLogger_MACApp.swift in Sources */,
+				E45CD9E72D93C39100FE87E8 /* DDLoggerClientFavList.swift in Sources */,
 				E49BE7A4289D26FD009AF799 /* LogParseTool.swift in Sources */,
 				E4FB22EF2895352200CAFDD6 /* DDLoggerClientCell.swift in Sources */,
 				E4FB22EC289531E400CAFDD6 /* Data+encode.swift in Sources */,
@@ -414,6 +418,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lazypig.DDLoggerClient;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -445,6 +450,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lazypig.DDLoggerClient;
 				PRODUCT_NAME = "$(TARGET_NAME)";

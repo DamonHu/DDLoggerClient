@@ -9,7 +9,9 @@ import SwiftUI
 import CommonCrypto
 
 struct NavMenuListView: View {
-    @Environment(\.openURL) var openURL
+    @Environment(\.openURL) private var openURL
+    @Environment(\.openWindow) private var openWindow
+    
     @Binding var list: [DDLoggerClientItem]    //显示在列表的log
     //本地加密配置
     @State private var privacyLogPassword = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogPassword.rawValue) ?? DDLoggerClient.privacyLogPassword
@@ -48,18 +50,37 @@ struct NavMenuListView: View {
                         print("点击设置")
                         isEditConfig = !isEditConfig
                     }.padding()
-                Image("icon_delete")
+                Image("icon_fav")
                     .resizable()
                     .frame(width: 20, height: 20, alignment: .center)
                     .onTapGesture {
-                        print("delete")
-                        if let path = self.selectedPath, let index = fileList.firstIndex(where: { url in
-                            return url.path == path
-                        }) {
-                            fileList.remove(at: index)
+                        var favListWindowsShow = false
+                        NSApp.windows.forEach { window in
+                            if let identifier = window.identifier?.rawValue {
+                                print("ss", identifier)
+                                if identifier.contains("favList") {
+                                    favListWindowsShow = true
+                                    window.orderFrontRegardless()
+                                    return
+                                }
+                            }
                         }
-                        self.selectedPath = nil
+                        if !favListWindowsShow {
+                            openWindow(id: "favList")
+                        }
                     }
+//                Image("icon_delete")
+//                    .resizable()
+//                    .frame(width: 20, height: 20, alignment: .center)
+//                    .onTapGesture {
+//                        print("delete")
+//                        if let path = self.selectedPath, let index = fileList.firstIndex(where: { url in
+//                            return url.path == path
+//                        }) {
+//                            fileList.remove(at: index)
+//                        }
+//                        self.selectedPath = nil
+//                    }
             }.frame(maxWidth: .infinity, alignment: .center)
             //中间内容布局
             if isEditConfig {
@@ -149,19 +170,43 @@ struct NavMenuListView: View {
                 List(self.fileList, id: \.path) { i in
                     NavMenuItemView(url: i, selectedPath: $selectedPath)
                         .onTapGesture {
-                            selectedPath = i.path
+                            if FileManager.default.fileExists(atPath: i.path) {
+                                selectedPath = i.path
+                            } else {
+                                print("文件不存在：\(i.path)")
+                                //TODO: 文件不存在
+                            }
+                            
                         }.contextMenu {
-                            Button(action: {
-                                NSWorkspace.shared.selectFile(i.path, inFileViewerRootedAtPath: "")
-                            }) {
-                                Text("在Finder中显示")
+                            VStack(alignment: .trailing, spacing: 10) {
+                                Button(action: {
+                                    NSWorkspace.shared.selectFile(i.path, inFileViewerRootedAtPath: "")
+                                }) {
+                                    Text("在Finder中显示")
+                                }
+                                Button(action: {
+                                    if let index = fileList.firstIndex(where: { url in
+                                        return url.path == i.path
+                                    }) {
+                                        fileList.remove(at: index)
+                                    }
+                                    if i.path == self.selectedPath {
+                                        self.selectedPath = nil
+                                    }
+                                }) {
+                                    Text("从列表删除")
+                                }
                             }
                         }
                 }
                 if self.fileList.isEmpty {
                     List {
-                        Text("drag file to here")
+                        Text("Drag file to here")
                             .frame(maxWidth: .infinity, alignment: .center)
+                            .font(.system(size: 18, weight: .bold))
+                        Text("拖拽文件到这里")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .font(.system(size: 18, weight: .bold))
                     }
                 }
             }.onDrop(of: ["public.file-url"], isTargeted: $dragOver) { providers in

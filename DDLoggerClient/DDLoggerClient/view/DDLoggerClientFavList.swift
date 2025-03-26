@@ -1,5 +1,5 @@
 //
-//  DDLoggerClientList.swift
+//  DDLoggerClientFavList.swift
 //  DDLoggerClient_MAC
 //
 //  Created by Damon on 2022/7/30.
@@ -7,10 +7,8 @@
 
 import SwiftUI
 
-struct DDLoggerClientList: View {
-    @Environment(\.openWindow) private var openWindow
+struct DDLoggerClientFavList: View {
     @Binding var list: [DDLoggerClientItem]
-    @Binding var favList: [DDLoggerClientItem]
     @Binding var filterText: String
     @Binding var selectedType: String
     
@@ -111,23 +109,9 @@ struct DDLoggerClientList: View {
                                         Text("复制日志")
                                     }
                                     Button(action: {
-                                        self.favList.append(item)
-                                        var favListWindowsShow = false
-                                        NSApp.windows.forEach { window in
-                                            if let identifier = window.identifier?.rawValue {
-                                                print("ss", identifier)
-                                                if identifier.contains("favList") {
-                                                    favListWindowsShow = true
-                                                    window.orderFrontRegardless()
-                                                    return
-                                                }
-                                            }
-                                        }
-                                        if !favListWindowsShow {
-                                            openWindow(id: "favList")
-                                        }
+                                        
                                     }) {
-                                        Text("收藏日志")
+                                        Text("置顶日志")
                                     }
                                 }
                             }

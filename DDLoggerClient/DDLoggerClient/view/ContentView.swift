@@ -12,13 +12,17 @@ struct ContentView: View {
     @State private var filterText: String = ""
     @State private var filterType: String = "ALL"
     @State private var selectedPath: String?
+    //收藏的 window 窗口
+    @Binding var favList: [DDLoggerClientItem]
+    @Binding var favFilterText: String
+    @Binding var favFilterType: String
     
     var body: some View {
         NavigationView {
             NavMenuListView(list: $list, selectedPath: $selectedPath).onChange(of: selectedPath) { newValue in
                 self.updateList()
             }
-            DDLoggerClientList(list: $list, filterText: $filterText, selectedType: $filterType).onChange(of: filterText) { newValue in
+            DDLoggerClientList(list: $list, favList: $favList, filterText: $filterText, selectedType: $filterType).onChange(of: filterText) { newValue in
                 print("searchText updated to: \(newValue)")
                 self.updateList()
             }.onChange(of: filterType) { newValue in
