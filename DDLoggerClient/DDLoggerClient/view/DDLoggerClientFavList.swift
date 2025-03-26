@@ -9,44 +9,27 @@ import SwiftUI
 
 struct DDLoggerClientFavList: View {
     @Binding var list: [DDLoggerClientItem]
-    @Binding var filterText: String
-    @Binding var selectedType: String
     
     @State var searchText: String = ""
-    @State private var tempFilterText: String = ""
     @State private var tempSearchText: String = ""
     @State private var selectedIndex: Int? = nil        //滚动索引到第几个
     @State private var filteredIndices: [Int] = []  // 存储搜索结果的索引
     
-    let options = ["ALL", "INFO", "WARN", "ERROR", "PRIVACY"]
-    
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            HStack(alignment: .center, spacing: 10) {
-                Text("过滤")
-                    .frame(width: 50, alignment: .center)
-                TextField("输入过滤内容，回车确定", text: $tempFilterText, onCommit: {
-                    self.filterText = self.tempFilterText
-                })
-                    .frame(height: 24)
-                    .border(.gray, width: 0.5)
-                    .textFieldStyle(.plain)
-                
-                Picker("日志等级", selection: $selectedType) {
-                     ForEach(0..<options.count, id: \.self) { index in
-                         Text(options[index]).tag(options[index])
-                      }
-                }
-                .pickerStyle(MenuPickerStyle()) // 使用下拉样式
-                Button("清空过滤条件") {
-                    self.tempFilterText = ""
-                    self.filterText = ""
-                    self.selectedType = "ALL"
-                }.frame(height: 30)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20))
-            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
             //查找
             HStack(alignment: .center, spacing: 10) {
+                Image("icon_delete")
+                    .resizable()
+                    .frame(width: 20, height: 20, alignment: .center)
+                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                    .onTapGesture {
+                        self.list = []
+                        self.searchText = ""
+                        self.tempSearchText = ""
+                        self.selectedIndex = nil
+                        self.filteredIndices = []
+                    }
                 Text("查找")
                     .frame(width: 50, alignment: .center)
                 TextField("输入查找内容，回车确定", text: $tempSearchText, onCommit: {

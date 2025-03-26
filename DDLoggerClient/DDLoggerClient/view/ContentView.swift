@@ -14,8 +14,6 @@ struct ContentView: View {
     @State private var selectedPath: String?
     //收藏的 window 窗口
     @Binding var favList: [DDLoggerClientItem]
-    @Binding var favFilterText: String
-    @Binding var favFilterType: String
     
     var body: some View {
         NavigationView {
