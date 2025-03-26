@@ -97,7 +97,7 @@ struct DDLoggerClientList: View {
                 LazyVStack {
                     ForEach(list.indices, id: \.self) { index in
                         let item = list[index]
-                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index)
+                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index, number: list.count - index)
                             .id(index)
                     }
                 }
