@@ -260,9 +260,15 @@ struct NavMenuListView: View {
                     .frame(width: 50, height: 50, alignment: .center)
                     .offset(y: -40)
             }
-            Button("GitHub") {
-                openURL(URL(string: "https://github.com/DamonHu/DDLoggerClient")!)
-            }.offset(y: -30)
+            HStack(alignment: .center) {
+                Button("东哥笔记") {
+                    openURL(URL(string: "https://dongge.org/blog")!)
+                }.offset(y: -30)
+                Button("GitHub") {
+                    openURL(URL(string: "https://github.com/DamonHu/DDLoggerClient")!)
+                }.offset(y: -30)
+            }
+            
         }
     }
 }
