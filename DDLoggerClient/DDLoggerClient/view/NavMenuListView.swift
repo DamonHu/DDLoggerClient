@@ -175,7 +175,7 @@ struct NavMenuListView: View {
                             if !FileManager.default.fileExists(atPath: i.path) {
                                 self.isShowFileAlert = true
                             }
-                        }.contextMenu {
+                        }.cornerRadius(18).background(Color(red: 238.0/255.0, green: 238.0/255.0, blue: 238.0/255.0)).contextMenu {
                             VStack(alignment: .trailing, spacing: 10) {
                                 Button(action: {
                                     NSWorkspace.shared.selectFile(i.path, inFileViewerRootedAtPath: "")

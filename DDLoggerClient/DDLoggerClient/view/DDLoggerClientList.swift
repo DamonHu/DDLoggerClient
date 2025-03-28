@@ -13,6 +13,7 @@ struct DDLoggerClientList: View {
     @Binding var favList: [DDLoggerClientItem]
     @Binding var filterText: String
     @Binding var selectedType: String
+    @Binding var needReload: Bool
     
     @State var searchText: String = ""
     @State private var tempFilterText: String = ""
@@ -41,9 +42,7 @@ struct DDLoggerClientList: View {
                 }
                 .pickerStyle(MenuPickerStyle()) // 使用下拉样式
                 Button("清空过滤条件") {
-                    self.tempFilterText = ""
-                    self.filterText = ""
-                    self.selectedType = "ALL"
+                    self.resetFilter()
                 }.frame(height: 30)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20))
             }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
@@ -133,9 +132,8 @@ struct DDLoggerClientList: View {
                             }
                     }
                 }
-            }
-            .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
-                .onChange(of: selectedIndex) { newValue in
+            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+            .onChange(of: selectedIndex) { newValue in
                     guard let index = self.selectedIndex else {
                         return
                     }
@@ -144,9 +142,34 @@ struct DDLoggerClientList: View {
                     withAnimation {
                         proxy.scrollTo(filteredIndice, anchor: .center)
                     }
+                }.onChange(of: needReload) { newValue in
+                    print("mmmmm", newValue)
+                    if needReload {
+                        self.resetFilter()
+                        self.resetSearch()
+                        proxy.scrollTo(0, anchor: .top)
+                        self.needReload = false
+                    }
                 }
         }
         
         
     }
+}
+
+extension DDLoggerClientList {
+    func resetSearch() {
+        self.tempSearchText = ""
+        self.searchText = self.tempSearchText
+        //搜索内容
+        self.selectedIndex = nil
+        self.filteredIndices = []
+    }
+    
+    func resetFilter() {
+        self.tempFilterText = ""
+        self.filterText = ""
+        self.selectedType = "ALL"
+    }
+    
 }

@@ -12,14 +12,16 @@ struct NavMenuItemView: View {
     @Binding var selectedPath: String?
     
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: 8) {
             Circle()
                 .foregroundColor(selectedPath == url.path ? .green : .gray)
-                .frame(width: 10, height: 10, alignment: .leading)
+                .frame(width: 13, height: 13, alignment: .leading)
             Text(url.lastPathComponent)
                 .foregroundColor(selectedPath == url.path ? .black : .gray)
+                .font(selectedPath == url.path ? .system(size: 14, weight: .bold): .system(size: 13))
                 .lineLimit(2)
-        }.padding(EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10))
+        }.padding(EdgeInsets(top: 16, leading: 10, bottom: 16, trailing: 10)).frame(maxWidth: .infinity, alignment: .leading) // 让 HStack 占满整个宽度
+            .contentShape(Rectangle())
         
     }
 }
