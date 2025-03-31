@@ -13,6 +13,7 @@
 		E49BE7A2289BC8E3009AF799 /* ConstConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49BE7A1289BC8E3009AF799 /* ConstConfig.swift */; };
 		E49BE7A4289D26FD009AF799 /* LogParseTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49BE7A3289D26FC009AF799 /* LogParseTool.swift */; };
 		E4F963DA2D96A6D3002B0378 /* SelectableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F963D92D96A6CF002B0378 /* SelectableTextView.swift */; };
+		E4F963DE2D9A9781002B0378 /* ContentEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F963DD2D9A9779002B0378 /* ContentEditView.swift */; };
 		E4FB22D128951BF800CAFDD6 /* DDLogger_MACApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22D028951BF800CAFDD6 /* DDLogger_MACApp.swift */; };
 		E4FB22D328951BF800CAFDD6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FB22D228951BF800CAFDD6 /* ContentView.swift */; };
 		E4FB22D528951BF900CAFDD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4FB22D428951BF900CAFDD6 /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 		E49BE7A3289D26FC009AF799 /* LogParseTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogParseTool.swift; sourceTree = "<group>"; };
 		E4A048982D9151AB00DAFFF6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E4F963D92D96A6CF002B0378 /* SelectableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableTextView.swift; sourceTree = "<group>"; };
+		E4F963DD2D9A9779002B0378 /* ContentEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentEditView.swift; sourceTree = "<group>"; };
 		E4FB22CD28951BF800CAFDD6 /* DDLoggerClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DDLoggerClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4FB22D028951BF800CAFDD6 /* DDLogger_MACApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDLogger_MACApp.swift; sourceTree = "<group>"; };
 		E4FB22D228951BF800CAFDD6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 		E4FB22F328953DC100CAFDD6 /* view */ = {
 			isa = PBXGroup;
 			children = (
+				E4F963DD2D9A9779002B0378 /* ContentEditView.swift */,
 				E4F963D92D96A6CF002B0378 /* SelectableTextView.swift */,
 				E45CD9E62D93C39000FE87E8 /* DDLoggerClientFavList.swift */,
 				E4FB22D228951BF800CAFDD6 /* ContentView.swift */,
@@ -208,11 +211,12 @@
 			};
 			buildConfigurationList = E4FB22C828951BF800CAFDD6 /* Build configuration list for PBXProject "DDLoggerClient" */;
 			compatibilityVersion = "Xcode 13.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = E4FB22C428951BF800CAFDD6;
 			productRefGroup = E4FB22CE28951BF800CAFDD6 /* Products */;
@@ -278,6 +282,7 @@
 				E4FB22D328951BF800CAFDD6 /* ContentView.swift in Sources */,
 				E4FB22D128951BF800CAFDD6 /* DDLogger_MACApp.swift in Sources */,
 				E45CD9E72D93C39100FE87E8 /* DDLoggerClientFavList.swift in Sources */,
+				E4F963DE2D9A9781002B0378 /* ContentEditView.swift in Sources */,
 				E49BE7A4289D26FD009AF799 /* LogParseTool.swift in Sources */,
 				E4FB22EF2895352200CAFDD6 /* DDLoggerClientCell.swift in Sources */,
 				E4FB22EC289531E400CAFDD6 /* Data+encode.swift in Sources */,

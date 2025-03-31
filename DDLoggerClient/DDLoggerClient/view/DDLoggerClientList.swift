@@ -14,13 +14,13 @@ struct DDLoggerClientList: View {
     @Binding var filterText: String
     @Binding var selectedType: String
     @Binding var needReload: Bool
+    @Binding var selectedItem: DDLoggerClientItem
     
     @State var searchText: String = ""
     @State private var tempFilterText: String = ""
     @State private var tempSearchText: String = ""
     @State private var selectedIndex: Int? = nil        //滚动索引到第几个
     @State private var filteredIndices: [Int] = []      // 存储搜索结果的索引
-    @State private var selectedScaleSection: Int? = nil      //放大的索引
     
     let options = ["ALL", "INFO", "WARN", "ERROR", "PRIVACY"]
     
@@ -99,7 +99,11 @@ struct DDLoggerClientList: View {
                 LazyVStack(pinnedViews: []) {
                     ForEach(list.indices, id: \.self) { index in
                         let item = list[index]
-                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index, number: list.count - index)
+                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index, number: list.count - index, onButtonClicked: {
+                            // 父视图处理按钮点击
+                            self.selectedItem = item
+                            openWindow(id: "itemPreview")
+                        })
                             .id(index).contextMenu {
                                 VStack(alignment: .trailing, spacing: 10) {
                                     Button(action: {
@@ -127,6 +131,12 @@ struct DDLoggerClientList: View {
                                         }
                                     }) {
                                         Text("收藏日志")
+                                    }
+                                    Button(action: {
+                                        self.selectedItem = item
+                                        openWindow(id: "itemPreview")
+                                    }) {
+                                        Text("查看详情")
                                     }
                                 }
                             }

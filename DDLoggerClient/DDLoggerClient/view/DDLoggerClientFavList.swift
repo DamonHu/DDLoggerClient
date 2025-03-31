@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct DDLoggerClientFavList: View {
+    @Environment(\.openWindow) private var openWindow
+    
     @Binding var list: [DDLoggerClientItem]
+    @Binding var selectedItem: DDLoggerClientItem
     
     @State var searchText: String = ""
     @State private var tempSearchText: String = ""
@@ -90,8 +93,11 @@ struct DDLoggerClientFavList: View {
                 LazyVStack {
                     ForEach(list.indices, id: \.self) { index in
                         let item = list[index]
-                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index, number: list.count - index)
-                            .id(index).contextMenu {
+                        DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index, number: list.count - index, onButtonClicked: {
+                            // 父视图处理按钮点击
+                            self.selectedItem = item
+                            openWindow(id: "itemPreview")
+                        }).id(index).contextMenu {
                                 VStack(alignment: .trailing, spacing: 10) {
                                     Button(action: {
                                         let pasteBoard = NSPasteboard.general
@@ -102,9 +108,15 @@ struct DDLoggerClientFavList: View {
                                         Text("复制日志")
                                     }
                                     Button(action: {
-                                        
+                                        self.list.remove(at: index)
                                     }) {
-                                        Text("置顶日志")
+                                        Text("取消置顶")
+                                    }
+                                    Button(action: {
+                                        self.selectedItem = item
+                                        openWindow(id: "itemPreview")
+                                    }) {
+                                        Text("查看详情")
                                     }
                                 }
                             }

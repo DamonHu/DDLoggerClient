@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var needReload: Bool = false
     //收藏的 window 窗口
     @Binding var favList: [DDLoggerClientItem]
+    //查看的window窗口
+    @Binding var selectedItem: DDLoggerClientItem
     
     var body: some View {
         NavigationView {
@@ -22,7 +24,7 @@ struct ContentView: View {
                 self.needReload = true
                 self.updateList()
             }
-            DDLoggerClientList(list: $list, favList: $favList, filterText: $filterText, selectedType: $filterType, needReload: $needReload).onChange(of: filterText) { newValue in
+            DDLoggerClientList(list: $list, favList: $favList, filterText: $filterText, selectedType: $filterType, needReload: $needReload, selectedItem: $selectedItem).onChange(of: filterText) { newValue in
                 print("searchText updated to: \(newValue)")
                 self.updateList()
             }.onChange(of: filterType) { newValue in

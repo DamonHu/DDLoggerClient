@@ -13,6 +13,7 @@ struct DDLoggerClientCell: View {
     var number: Int
     @FocusState private var isFocus: Bool
     @State private var textEditorID = UUID()
+    var onButtonClicked: () -> Void  // 回调函数
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -28,11 +29,15 @@ struct DDLoggerClientCell: View {
                 if (isFocus) {
                     Button("退出编辑", role: .cancel) {
                         self.isFocus = false
-                    }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                    }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                 } else {
                     Button("编辑", role: .cancel) {
                         self.isFocus = true
-                    }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                    }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                    
+                    Button("大屏查看", role: .cancel) {
+                        onButtonClicked()
+                    }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
             }.frame(maxWidth: .infinity, alignment: .leading).background(Color(red: 246/255.0, green: 246.0/255.0, blue: 246.0/255.0))
             
@@ -40,7 +45,7 @@ struct DDLoggerClientCell: View {
             TextEditor(text: .constant(item.getLogContent())).padding()
                 .padding(EdgeInsets(top: -20, leading: 0, bottom: 0, trailing: 30))
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .scrollContentBackground(isFocus ? .automatic : .hidden)
+                                .scrollContentBackground(isFocus ? .visible : .hidden)
                                 .id(textEditorID)
                                 .scrollDisabled(!isFocus)
                                 .focused($isFocus)
@@ -50,10 +55,12 @@ struct DDLoggerClientCell: View {
                                 .lineSpacing(8)
                                 .offset(y: 10)
                                 .background(isSelected ? Color(red: 193/255.0, green: 70.0/255.0, blue: 0.0/255.0, opacity: 0.9) : Color(red: 246/255.0, green: 246.0/255.0, blue: 246.0/255.0))
-                                .frame(maxWidth: .infinity, maxHeight: 200)
+                                .frame(maxWidth: .infinity, minHeight: 60, maxHeight: 200)
                                 .onChange(of: isFocus) { isFocus in
                                     if !isFocus {
-                                        textEditorID = UUID()
+                                        DispatchQueue.main.async {
+                                            textEditorID = UUID()
+                                        }
                                     }
                                 }
         }
