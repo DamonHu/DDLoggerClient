@@ -19,7 +19,8 @@ struct DDLoggerClientList: View {
     @State private var tempFilterText: String = ""
     @State private var tempSearchText: String = ""
     @State private var selectedIndex: Int? = nil        //滚动索引到第几个
-    @State private var filteredIndices: [Int] = []  // 存储搜索结果的索引
+    @State private var filteredIndices: [Int] = []      // 存储搜索结果的索引
+    @State private var selectedScaleSection: Int? = nil      //放大的索引
     
     let options = ["ALL", "INFO", "WARN", "ERROR", "PRIVACY"]
     
@@ -95,7 +96,7 @@ struct DDLoggerClientList: View {
         
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack {
+                LazyVStack(pinnedViews: []) {
                     ForEach(list.indices, id: \.self) { index in
                         let item = list[index]
                         DDLoggerClientCell(item: item, isSelected: self.selectedIndex.map { self.filteredIndices[$0] } == index, number: list.count - index)
@@ -114,7 +115,6 @@ struct DDLoggerClientList: View {
                                         var favListWindowsShow = false
                                         NSApp.windows.forEach { window in
                                             if let identifier = window.identifier?.rawValue {
-                                                print("ss", identifier)
                                                 if identifier.contains("favList") {
                                                     favListWindowsShow = true
                                                     window.orderFrontRegardless()
@@ -143,7 +143,6 @@ struct DDLoggerClientList: View {
                         proxy.scrollTo(filteredIndice, anchor: .center)
                     }
                 }.onChange(of: needReload) { newValue in
-                    print("mmmmm", newValue)
                     if needReload {
                         self.resetFilter()
                         self.resetSearch()

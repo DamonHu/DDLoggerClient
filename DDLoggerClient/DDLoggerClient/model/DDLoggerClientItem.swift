@@ -12,9 +12,9 @@ import SwiftUI
 
 let t = Date()
 
-enum Section: CaseIterable {
-    case main
-}
+//enum Section: CaseIterable {
+//    case main
+//}
 ///log的内容
 public class DDLoggerClientItem {
     let identifier = UUID()                                 //用于hash计算
