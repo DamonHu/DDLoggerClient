@@ -8,6 +8,17 @@
 
 [DDLoggerSwift](https://github.com/DamonHu/DDLoggerSwift) 使用SQLite存储日志信息，如果使用通用的SQLite查看工具，只是一条一条的表格，并且有的还收费。所以开发该工具方便查看配合更直观的查看数据。
 
+## 功能亮点
+
+* 原生swiftUI开发，性能更强
+* db和log文件查看，大日志极速加载
+* 自动解析日志级别、时间、文件调用堆栈
+* 内容过滤 & 日志级别过滤
+* 内容搜索、复制
+* 跨文件，日志内容收藏搜索
+* 独立窗口管理、查看、编辑
+* 解密DDLoggerSwift的加密日志
+
 ## 客户端下载
 
 [Releases](https://github.com/DamonHu/DDLoggerClient/releases)，下载`Release`中的`dmg`文件，拖拽进应用程序即可
