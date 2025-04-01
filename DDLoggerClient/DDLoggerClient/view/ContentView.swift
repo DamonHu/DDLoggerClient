@@ -19,11 +19,13 @@ struct ContentView: View {
     @Binding var selectedItem: DDLoggerClientItem
     
     var body: some View {
-        NavigationView {
+        
+        NavigationSplitView {
             NavMenuListView(list: $list, selectedPath: $selectedPath).onChange(of: selectedPath) { newValue in
                 self.needReload = true
                 self.updateList()
-            }
+            }.frame(minWidth: 300)
+        } detail: {
             DDLoggerClientList(list: $list, favList: $favList, filterText: $filterText, selectedType: $filterType, needReload: $needReload, selectedItem: $selectedItem).onChange(of: filterText) { newValue in
                 print("searchText updated to: \(newValue)")
                 self.updateList()
@@ -31,7 +33,13 @@ struct ContentView: View {
                 print("searchType updated to: \(newValue)")
                 self.updateList()
             }
-        }.navigationTitle("DDLoggerClient")
+        }
+
+        
+//        NavigationView {
+//            
+//            
+//        }.navigationTitle("DDLoggerClient")
     }
 }
 
