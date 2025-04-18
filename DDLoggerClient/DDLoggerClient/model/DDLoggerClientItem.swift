@@ -35,7 +35,12 @@ extension DDLoggerClientItem {
     func getLogContent() -> String {
         var contentString = ""
         if self.mLogItemType == .privacy {
-            contentString = mLogContent.aesCBCDecrypt(password: DDLoggerClient.privacyLogPassword, ivString: DDLoggerClient.privacyLogIv, encodeType: DDLoggerClient.privacyResultEncodeType) ?? "Invalid encryption"
+            let privacyLogPassword = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogPassword.rawValue) ?? "12345678901234561234567890123456"
+            let privacyLogIv = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogIv.rawValue) ?? "abcdefghijklmnop"
+            let isEncodeHex = UserDefaults.standard.bool(forKey: UserDefaultsKey.isEncodeHex.rawValue)
+            let encodeType = isEncodeHex ? ZXKitUtilEncodeType.hex : ZXKitUtilEncodeType.base64
+            //加密字符
+            contentString = mLogContent.aesCBCDecrypt(password: privacyLogPassword, ivString: privacyLogIv, encodeType: encodeType) ?? "Invalid encryption"
         } else {
             contentString = mLogContent
         }

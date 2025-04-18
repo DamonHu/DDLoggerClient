@@ -21,7 +21,7 @@ struct ContentView: View {
     var body: some View {
         
         NavigationSplitView {
-            NavMenuListView(list: $list, selectedPath: $selectedPath).onChange(of: selectedPath) { newValue in
+            NavMenuListView(needReload:$needReload, selectedPath: $selectedPath).onChange(of: selectedPath) { newValue in
                 self.needReload = true
                 self.updateList()
             }.frame(minWidth: 300)

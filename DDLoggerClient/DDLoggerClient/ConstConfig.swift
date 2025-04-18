@@ -9,9 +9,7 @@ import Foundation
 
 enum UserDefaultsKey: String {
     case fileListHistory
-    case domain
-    case socketType
     case privacyLogPassword
     case privacyLogIv
-    case isEncodeBase64
+    case isEncodeHex
 }

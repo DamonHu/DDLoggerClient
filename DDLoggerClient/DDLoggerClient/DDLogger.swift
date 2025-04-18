@@ -37,7 +37,7 @@ extension DDLogType {
 //            return Color(red: 229.0/255.0, green: 43.0/255.0, blue: 80.0/255.0)
             return Color(red: 169.0/255.0, green: 74.0/255.0, blue: 74.0/255.0)
         case .privacy:
-            return Color(red: 165.0/255.0, green: 42.0/255.0, blue: 42.0/255.0)
+            return Color(red: 9.0/255.0, green: 110.0/255.0, blue: 249.0/255.0)
         default:
             return .black
         }
@@ -60,16 +60,4 @@ extension DDLogType {
             return nil
         }
     }
-}
-
-public class DDLoggerClient {
-    public static let shared = DDLoggerClient()
-    /*隐私数据采用AESCBC加密
-     *需要设置密码privacyLogPassword
-     *初始向量privacyLogIv
-     *结果编码类型可以选择base64和hex编码
-     **/
-    public static var privacyLogPassword = "12345678901234561234567890123456"
-    public static var privacyLogIv = "abcdefghijklmnop"
-    public static var privacyResultEncodeType = ZXKitUtilEncodeType.hex
 }

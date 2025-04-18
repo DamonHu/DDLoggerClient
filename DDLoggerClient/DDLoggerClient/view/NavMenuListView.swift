@@ -12,11 +12,10 @@ struct NavMenuListView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.openWindow) private var openWindow
     
-    @Binding var list: [DDLoggerClientItem]    //显示在列表的log
     //本地加密配置
-    @State private var privacyLogPassword = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogPassword.rawValue) ?? DDLoggerClient.privacyLogPassword
-    @State private var privacyLogIv = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogIv.rawValue) ?? DDLoggerClient.privacyLogIv
-    @State private var isEncodeBase64 = UserDefaults.standard.bool(forKey: UserDefaultsKey.isEncodeBase64.rawValue)
+    @State private var privacyLogPassword = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogPassword.rawValue) ?? "12345678901234561234567890123456"
+    @State private var privacyLogIv = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogIv.rawValue) ?? "abcdefghijklmnop"
+    @State private var isEncodeHex = UserDefaults.standard.bool(forKey: UserDefaultsKey.isEncodeHex.rawValue)
     //服务器配置
     @State private var fileList: [URL] = [] {
         willSet {
@@ -26,6 +25,7 @@ struct NavMenuListView: View {
             UserDefaults.standard.set(pathList, forKey: UserDefaultsKey.fileListHistory.rawValue)
         }
     }
+    @Binding var needReload: Bool
     @Binding var selectedPath: String?
     @State private var dragOver = false
     @State private var showAlert = false
@@ -106,7 +106,7 @@ struct NavMenuListView: View {
                         
                     }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                     HStack(alignment: .center, spacing: 4) {
-                        Text("Iv")
+                        Text("iv")
                             .frame(width: 70, alignment: .center)
                         TextField("abcdefghijklmnop", text: $privacyLogIv)
                             .frame(height: 24)
@@ -117,14 +117,14 @@ struct NavMenuListView: View {
                         Text("Encode")
                             .frame(width: 70, alignment: .center)
                         HStack(alignment: .center, spacing: 0) {
-                            Button("hex") {
-                                self.isEncodeBase64 = false
-                            }.background(isEncodeBase64 ? .gray : .green)
+                            Button("base64") {
+                                self.isEncodeHex = false
+                            }.background(isEncodeHex ? .gray : .green)
                                 .foregroundColor(.white)
                                 .frame(height: 40)
-                            Button("base64") {
-                                self.isEncodeBase64 = true
-                            }.background(isEncodeBase64 ? .green : .gray)
+                            Button("hex") {
+                                self.isEncodeHex = true
+                            }.background(isEncodeHex ? .green : .gray)
                                 .foregroundColor(.white)
                                 .frame(height: 40)
                         }
@@ -137,14 +137,11 @@ struct NavMenuListView: View {
                                 return
                             }
                             isEditConfig = false
-                            DDLoggerClient.privacyLogPassword = privacyLogPassword
-                            DDLoggerClient.privacyLogIv = privacyLogIv
-                            DDLoggerClient.privacyResultEncodeType = isEncodeBase64 ? .base64 : .hex
+                            needReload = true
                             
-                            UserDefaults.standard.set(typeText, forKey: UserDefaultsKey.socketType.rawValue)
                             UserDefaults.standard.set(privacyLogPassword, forKey: UserDefaultsKey.privacyLogPassword.rawValue)
                             UserDefaults.standard.set(privacyLogIv, forKey: UserDefaultsKey.privacyLogIv.rawValue)
-                            UserDefaults.standard.set(isEncodeBase64, forKey: UserDefaultsKey.isEncodeBase64.rawValue)
+                            UserDefaults.standard.set(isEncodeHex, forKey: UserDefaultsKey.isEncodeHex.rawValue)
                         }.foregroundColor(.white)
                             .background(.green)
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
@@ -154,12 +151,9 @@ struct NavMenuListView: View {
                             }
                         Button("取消") {
                             isEditConfig = false
-                            switch DDLoggerClient.privacyResultEncodeType {
-                            case .base64:
-                                isEncodeBase64 = true
-                            default:
-                                isEncodeBase64 = false
-                            }
+                            privacyLogPassword = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogPassword.rawValue) ?? "12345678901234561234567890123456"
+                            privacyLogIv = UserDefaults.standard.string(forKey: UserDefaultsKey.privacyLogIv.rawValue) ?? "abcdefghijklmnop"
+                            isEncodeHex = UserDefaults.standard.bool(forKey: UserDefaultsKey.isEncodeHex.rawValue)
                         }.foregroundColor(.white)
                             .background(.gray)
                             .frame(height: 40)

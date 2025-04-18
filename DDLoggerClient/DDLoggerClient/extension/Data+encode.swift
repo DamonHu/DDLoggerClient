@@ -151,17 +151,19 @@ public extension Data {
      AES block Size: 128
      **/
     func aesCBCEncrypt(password: String, ivString: String = "abcdefghijklmnop", encodeType: ZXKitUtilEncodeType = .base64) -> String? {
-        assert(ivString.count == kCCKeySizeAES128, "iv should be \(kCCKeySizeAES128) bytes")
-        assert(password.count == kCCKeySizeAES128 || password.count == kCCKeySizeAES192 || password.count == kCCKeySizeAES256, "Invalid key length. Available length is \(kCCKeySizeAES128) \(kCCKeySizeAES192) \(kCCKeySizeAES256)")
-        let encryptData = self._crypt(data: self, password: password, ivString: ivString, option: CCOperation(kCCEncrypt))
+        guard let iv = ivString.data(using: .utf8), let key = password.data(using: .utf8) else { return nil }
+        assert(iv.count == kCCKeySizeAES128, "iv should be \(kCCKeySizeAES128) bytes")
+        assert(key.count == kCCKeySizeAES128 || key.count == kCCKeySizeAES192 || key.count == kCCKeySizeAES256, "Invalid key length. Available length is \(kCCKeySizeAES128) \(kCCKeySizeAES192) \(kCCKeySizeAES256)")
+        let encryptData = self._crypt(data: self, key: key, iv: iv, option: CCOperation(kCCEncrypt))
         return encryptData?.encodeString(encodeType: encodeType)
     }
     
     ///AES CBC解密
     func aesCBCDecrypt(password: String, ivString: String = "abcdefghijklmnop") -> String? {
-        assert(ivString.count == kCCKeySizeAES128, "iv should be \(kCCKeySizeAES128) bytes")
-        assert(password.count == kCCKeySizeAES128 || password.count == kCCKeySizeAES192 || password.count == kCCKeySizeAES256, "Invalid key length. Available length is \(kCCKeySizeAES128) \(kCCKeySizeAES192) \(kCCKeySizeAES256)")
-        guard let encryptData = self._crypt(data: self, password: password, ivString: ivString, option: CCOperation(kCCDecrypt)) else {
+        guard let iv = ivString.data(using: .utf8), let key = password.data(using: .utf8) else { return nil }
+        assert(iv.count == kCCKeySizeAES128, "iv should be \(kCCKeySizeAES128) bytes")
+        assert(key.count == kCCKeySizeAES128 || key.count == kCCKeySizeAES192 || key.count == kCCKeySizeAES256, "Invalid key length. Available length is \(kCCKeySizeAES128) \(kCCKeySizeAES192) \(kCCKeySizeAES256)")
+        guard let encryptData = self._crypt(data: self, key: key, iv: iv, option: CCOperation(kCCDecrypt)) else {
             return nil
         }
         return String(data: encryptData, encoding: String.Encoding.utf8)
@@ -237,10 +239,7 @@ public extension  Data {
 #endif
 
 private extension Data {
-    func _crypt(data: Data, password: String, ivString: String, option: CCOperation) -> Data? {
-        guard let iv = ivString.data(using:String.Encoding.utf8) else { return nil }
-        guard let key = password.data(using:String.Encoding.utf8) else { return nil }
-        
+    func _crypt(data: Data, key: Data, iv: Data, option: CCOperation) -> Data? {
         let cryptLength = data.count + kCCBlockSizeAES128
         var cryptData   = Data(count: cryptLength)
 
